@@ -3,6 +3,7 @@ import { geoEqualEarth } from "d3-geo";
 import { ROWS, colorOf, fmt, km, loadPhotos, scaleWord, type Photo } from "../data";
 import { WorldMap } from "./WorldMap";
 import { arc } from "../geo";
+import { Mark, MarkPin } from "./Mark";
 
 type Sort = "game" | "hard" | "easy";
 type Tier = "all" | "city" | "town";
@@ -61,19 +62,22 @@ export function Explorer() {
               <img src={`${base}photos/${p.id}.webp`} alt="" loading="lazy" width={p.w} height={p.h} />
               <span className="tile-meta small">
                 <span className="num">{sort === "game" ? `Game ${p.game} · ${p.round}` : `${p.flag} ${p.country}`}</span>
-                <span className="num avg" style={{ background: `rgba(27,26,23,${0.25 + (1 - p.avgPts / 5000) * 0.6})` }}>{fmt(p.avgPts)}</span>
+                <span className="avg" title="Average score across all models, out of 5,000">avg {fmt(p.avgPts)}</span>
               </span>
             </button>
           ))}
         </div>
-        <p className="small muted foot">The number on each photo is the average score across all models, out of 5,000.</p>
+        <p className="small muted foot">Each tile shows the average score across all {ROWS.length} models, out of 5,000. Use the arrow keys to step through photos once one is open.</p>
       </div>
-      {open && <PhotoPanel p={open} onClose={() => setOpen(null)} />}
+      {open && (() => {
+        const i = list.findIndex((p) => p.id === open.id);
+        return <PhotoPanel p={open} pos={`${i + 1} of ${list.length}`} onClose={() => setOpen(null)} onPrev={() => setOpen(list[(i - 1 + list.length) % list.length])} onNext={() => setOpen(list[(i + 1) % list.length])} />;
+      })()}
     </section>
   );
 }
 
-function PhotoPanel({ p, onClose }: { p: Photo; onClose: () => void }) {
+function PhotoPanel({ p, pos, onClose, onPrev, onNext }: { p: Photo; pos: string; onClose: () => void; onPrev: () => void; onNext: () => void }) {
   const [hover, setHover] = useState<string | null>(null);
   const [reveal, setReveal] = useState(false);
   useEffect(() => setReveal(false), [p.id]);
@@ -89,15 +93,22 @@ function PhotoPanel({ p, onClose }: { p: Photo; onClose: () => void }) {
       <div className="panel card" role="dialog" aria-modal="true" aria-label="Photo detail" onClick={(e) => e.stopPropagation()}>
         <button className="chip close" onClick={onClose} aria-label="Close">Close</button>
         <div className="panel-photo">
+         <div className="panel-photo-in">
           <img src={`${base}photos/${p.id}.webp`} alt="Street-level photo" width={p.w} height={p.h} />
           <div className="small panel-truth">
             {reveal ? (
               <span><b>{p.flag} {p.place}, {p.country}</b> <span className="muted">· {p.tier === "town" ? "small town" : "city"}</span></span>
             ) : (
-              <button className="chip" onClick={() => setReveal(true)}>Reveal where this is</button>
+              <span className="muted">Location hidden until you reveal it.</span>
             )}
-            <span className="muted">Photo: <a href={p.sourceUrl} target="_blank" rel="noreferrer">{p.source}</a>{p.author ? ` by ${p.author}` : ""}, {p.license}</span>
+            <div className="panel-nav">
+              <button className="chip" onClick={onPrev} aria-label="Previous photo">← Previous</button>
+              <span className="muted">{pos}</span>
+              <button className="chip" onClick={onNext} aria-label="Next photo">Next →</button>
+            </div>
+            <span className="muted">Photo{p.author ? ` by ${p.author}` : ""} on <a href={p.sourceUrl} target="_blank" rel="noreferrer">{p.source}</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noreferrer">CC BY-SA 4.0</a>. Resized for this page.</span>
           </div>
+         </div>
         </div>
         <div className="panel-side">
           {reveal ? (
@@ -108,12 +119,12 @@ function PhotoPanel({ p, onClose }: { p: Photo; onClose: () => void }) {
                     {order.map(({ r, g }) => g.lat != null && g.lng != null && (
                       <path key={r.key} d={path(arc([g.lng, g.lat], [p.lng, p.lat])) ?? ""} fill="none" stroke={colorOf(r.key)} strokeWidth={hover === r.key ? 2.2 : 1} strokeDasharray="3 3" opacity={hover && hover !== r.key ? 0.12 : 0.7} />
                     ))}
-                    {(() => { const [x, y] = pr([p.lng, p.lat]) ?? [0, 0]; return <g transform={`translate(${x},${y})`}><circle r={7} fill="var(--card)" stroke="var(--ink)" strokeWidth={2.5} /><circle r={2} fill="var(--ink)" /></g>; })()}
-                    {order.map(({ r, g }) => {
+                    {[...order].reverse().map(({ r, g }) => {
                       if (g.lat == null || g.lng == null) return null;
                       const [x, y] = pr([g.lng, g.lat]) ?? [0, 0];
-                      return <circle key={r.key} cx={x} cy={y} r={hover === r.key ? 7 : 5} fill={colorOf(r.key)} stroke="var(--card)" strokeWidth={1.6} opacity={hover && hover !== r.key ? 0.2 : 1} />;
+                      return <g key={r.key} transform={`translate(${x},${y})`}><MarkPin k={r.key} r={hover === r.key ? 12 : 9} dim={!!hover && hover !== r.key} /></g>;
                     })}
+                    {(() => { const [x, y] = pr([p.lng, p.lat]) ?? [0, 0]; return <g transform={`translate(${x},${y})`}><circle r={6} fill="var(--ink)" stroke="var(--card)" strokeWidth={2} /><circle r={2} fill="var(--card)" /></g>; })()}
                   </g>
                 )}
               </WorldMap>
@@ -121,13 +132,12 @@ function PhotoPanel({ p, onClose }: { p: Photo; onClose: () => void }) {
                 {order.map(({ r, g }) => (
                   <li key={r.key} onMouseEnter={() => setHover(r.key)} onMouseLeave={() => setHover(null)}>
                     <div className="said-top">
-                      <span className="dot" style={{ background: colorOf(r.key) }} />
+                      <Mark k={r.key} size={22} />
                       <b>{r.name}</b>
-                      <span className="muted small">{g.place ?? "no answer"}</span>
-                      <span className="num small said-km">{km(g.km)} · {fmt(g.pts)}</span>
+                      <span className="muted small">{g.place ?? (g.lat == null ? "no answer" : g.country ?? "")}</span>
+                      <span className="small said-km">{fmt(g.pts)} pts · {km(g.km)}, {scaleWord(g.km)}</span>
                     </div>
                     <p className="small ink2">{g.said || <span className="muted">(no explanation given)</span>}</p>
-                    <span className="small muted">{scaleWord(g.km)}</span>
                   </li>
                 ))}
               </ol>
@@ -136,6 +146,7 @@ function PhotoPanel({ p, onClose }: { p: Photo; onClose: () => void }) {
             <div className="guess-first">
               <h3>Where do you think it is?</h3>
               <p className="ink2">Take a look first. When you reveal it, you will see every model's pin and the reasoning it gave.</p>
+              <button className="chip reveal-cta" onClick={() => setReveal(true)}>Reveal the answer</button>
             </div>
           )}
         </div>

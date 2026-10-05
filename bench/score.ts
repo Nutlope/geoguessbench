@@ -79,12 +79,13 @@ const rows = entries.map((e) => {
     const idx = locs.map((l, i) => (l.region === reg ? i : -1)).filter((i) => i >= 0);
     if (idx.length) byRegion[reg] = { n: idx.length, mean: Math.round(mean(idx.map((i) => pts[i]))) };
   }
-  const byTier: Record<string, { n: number; meanPts: number; gameMean: number; medianKm: number; countryAcc: number }> = {};
+  const byTier: Record<string, { n: number; meanPts: number; gameMean: number; gameCi: [number, number]; medianKm: number; countryAcc: number }> = {};
   for (const tier of ["city", "town"]) {
     const idx = locs.map((l, i) => (l.tier === tier ? i : -1)).filter((i) => i >= 0);
     if (!idx.length) continue;
     const m = mean(idx.map((i) => pts[i]));
-    byTier[tier] = { n: idx.length, meanPts: Math.round(m), gameMean: Math.round(m * 5), medianKm: Math.round(median(idx.map((i) => r[i].km)) * 10) / 10, countryAcc: mean(idx.map((i) => (r[i].countryOk ? 1 : 0))) };
+    const [tlo, thi] = bootstrap(idx.map((i) => pts[i]));
+    byTier[tier] = { n: idx.length, meanPts: Math.round(m), gameMean: Math.round(m * 5), gameCi: [Math.round(tlo * 5), Math.round(thi * 5)], medianKm: Math.round(median(idx.map((i) => r[i].km)) * 10) / 10, countryAcc: mean(idx.map((i) => (r[i].countryOk ? 1 : 0))) };
   }
   return {
     byTier,
@@ -109,6 +110,26 @@ const rows = entries.map((e) => {
   };
 }).sort((a, b) => b.meanPts - a.meanPts);
 
+// Paired bootstrap: every model saw the same photos, so resample photos and
+// recompute each model's gap to the leader on the same draw. If the 95%
+// interval of the gap includes zero, that model is tied with the leader.
+{
+  const lead = rows[0].key;
+  const lp = res.get(lead)!.map((x) => x.pts);
+  for (const r of rows) {
+    const rp = res.get(r.key)!.map((x) => x.pts);
+    const rng = mulberry32(123);
+    const diffs: number[] = [];
+    for (let b = 0; b < 4000; b++) {
+      let d = 0;
+      for (let i = 0; i < lp.length; i++) { const j = Math.floor(rng() * lp.length); d += lp[j] - rp[j]; }
+      diffs.push((d / lp.length) * 5);
+    }
+    const lo = quant(diffs, 0.025), hi = quant(diffs, 0.975);
+    Object.assign(r, { gapToTop: Math.round((r.key === lead ? 0 : mean(lp) - mean(rp)) * 5), gapCi: [Math.round(lo), Math.round(hi)], tiedWithTop: r.key === lead || lo <= 0 });
+  }
+}
+
 // Distance curve: share of guesses within d km, d log-spaced 0.1..20000.
 const DS = Array.from({ length: 61 }, (_, i) => Math.round(10 ** (-1 + (i * 5.3) / 60) * 100) / 100);
 const curves = Object.fromEntries(entries.map((e) => {
@@ -128,6 +149,14 @@ for (const a of rows) {
   }
 }
 
+/** Keep explanations readable: cut long ones at a sentence end and say so. */
+function clip(t: string, max = 520): string {
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max);
+  const end = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("! "), cut.lastIndexOf("? "));
+  return (end > 200 ? cut.slice(0, end + 1) : cut.trimEnd()) + " …";
+}
+
 // Per-photo detail for the explorer, plus web-sized photos.
 const photos = await Promise.all(locs.map(async (l, i) => {
   const dest = `${IMG_OUT}/${l.id}.webp`;
@@ -136,7 +165,7 @@ const photos = await Promise.all(locs.map(async (l, i) => {
     const r = runs.get(e.key)!.get(l.id)!;
     const g = parseGuess(r.text);
     const x = res.get(e.key)![i];
-    return [e.key, g ? { lat: +g.lat.toFixed(4), lng: +g.lng.toFixed(4), km: Math.round(x.km * 10) / 10, pts: x.pts, place: g.place ?? null, country: x.guessCountry, said: narration(r.text).slice(0, 600) } : { lat: null, lng: null, km: null, pts: 0, place: null, country: null, said: narration(r.text).slice(0, 600) }];
+    return [e.key, g ? { lat: +g.lat.toFixed(4), lng: +g.lng.toFixed(4), km: Math.round(x.km * 10) / 10, pts: x.pts, place: g.place ?? null, country: x.guessCountry, said: clip(narration(r.text)) } : { lat: null, lng: null, km: null, pts: 0, place: null, country: null, said: clip(narration(r.text)) }];
   }));
   const avg = mean(Object.values(guesses).map((g) => g.pts));
   return {
@@ -157,6 +186,7 @@ const meta = {
   tiers: { city: locs.filter((l) => l.tier !== "town").length, town: locs.filter((l) => l.tier === "town").length },
   sources: Object.fromEntries(["Panoramax", "KartaView"].map((s) => [s, locs.filter((l) => l.source === s).length])),
   totalCalls: rows.length * locs.length,
+  rejectedByHand: rejected.size,
   totalCost: rows.reduce((a, r) => a + r.costTotal, 0),
   thresholds: THRESH,
   curveKm: DS,

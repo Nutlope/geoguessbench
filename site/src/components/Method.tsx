@@ -4,19 +4,20 @@ import { SYSTEM, USER } from "../prompt";
 export function Method() {
   const regions = Object.entries(META.regions).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]);
   const total = META.photos;
+  const ties = ROWS.filter((r) => r.tiedWithTop);
   return (
     <section className="block" id="method">
       <div className="wrap">
         <div className="head">
           <div className="kicker"><b>07</b> Method</div>
           <h2>How it works, and what it can't tell you</h2>
-          <p className="lead">Small enough to read in two minutes. Everything here is in the repo and reruns with three commands.</p>
+          <p className="lead">Small enough to read in two minutes. Everything here is in the repo and reruns with four commands.</p>
         </div>
         <div className="method">
           <article className="card m">
             <h3>The photos</h3>
             <p>{META.photos} street-level photos from Panoramax and KartaView, two open archives (CC BY-SA 4.0). {META.tiers.city} come from well known cities and {META.tiers.town} from random towns of 1,000 to 100,000 people, at most one photo per place.</p>
-            <p>Every photo is re-encoded to 1024 px, which strips all metadata, so no GPS tag ever reaches a model. A vision check (Claude Haiku 4.5, not scored) throws out indoor shots, blur, dashboards, and anything with burned-in timestamps or coordinates. Then we looked at every one by eye.</p>
+            <p>Every photo is re-encoded to 1024 px, which strips all metadata, so no GPS tag ever reaches a model. A vision check by Claude Haiku 4.5 throws out indoor shots, blur, dashboards, and anything with burned-in timestamps or coordinates. It only judges whether a photo is usable and is never told where it was taken; Haiku also plays as a contestant, under the same rules as everyone else. Then a person looked at every photo and removed {META.rejectedByHand} more.</p>
           </article>
           <article className="card m">
             <h3>The game</h3>
@@ -25,7 +26,7 @@ export function Method() {
           </article>
           <article className="card m">
             <h3>The rules for models</h3>
-            <p>One prompt for everyone, one image, one try. No web search, no tools, no second chances. If a reply has no usable coordinates it scores zero. Claude runs without refusal fallbacks, so every answer comes from the model named.</p>
+            <p>One prompt for everyone, one image, one try. No web search, no tools, no second chances. If a reply has no usable coordinates it scores zero. Provider errors (a dropped stream, an empty reply) are retried rather than scored, up to four times. Claude runs without refusal fallbacks, so every answer comes from the model named.</p>
             <p>v1 tests each model in its fastest mode: open models with reasoning off, Claude at effort low. Thinking modes get their own rows in a later version.</p>
             <details>
               <summary className="small">Read the exact prompt</summary>
@@ -40,6 +41,7 @@ export function Method() {
               <li>These archives are public, so some photos may have been in a model's training data.</li>
               <li>One still frame, no panning or zoom. Humans in GeoGuessr can look around.</li>
               <li>{META.photos} photos is a first cut. Brackets in the leaderboard show how much is noise.</li>
+              {ties.length > 1 && <li>{ties.map((r) => r.name).join(", ")} are statistically tied on this photo set (paired bootstrap, 95%). Their order is not a ranking.</li>}
               <li>OpenAI models are not in v1 yet.</li>
             </ul>
           </article>

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { ROWS, META, colorOf, fmt, km, pct, money } from "../data";
+import { Mark } from "./Mark";
 
 type Filter = "all" | "open" | "closed";
 type Tier = "all" | "city" | "town";
@@ -15,7 +16,7 @@ export function Leaderboard() {
       return {
         r,
         game: t ? t.gameMean : r.gameMean,
-        ci: t ? null : r.gameCi,
+        ci: t ? t.gameCi : r.gameCi,
         medianKm: t ? t.medianKm : r.medianKm,
         country: t ? t.countryAcc : r.countryAcc,
       };
@@ -53,16 +54,19 @@ export function Leaderboard() {
           <div className="lb-row lb-hd small muted" role="row">
             <span role="columnheader">#</span>
             <span role="columnheader">Model</span>
-            <span role="columnheader">Game score</span>
+            <span role="columnheader">Score per game, out of 25,000</span>
             <span role="columnheader" className="r">Right country</span>
             <span role="columnheader" className="r">Typical miss</span>
             <span role="columnheader" className="r">Cost per game</span>
           </div>
           {rows.map(({ r, game, ci, medianKm, country }, i) => (
             <div className="lb-row" role="row" key={r.key}>
-              <span className="rank num" role="cell">{i + 1}</span>
+              <span className="rank" role="cell">
+                {filter === "all" && tier === "all" && r.tiedWithTop ? "1" : i + 1}
+                {filter === "all" && tier === "all" && r.tiedWithTop && ROWS.filter((x) => x.tiedWithTop).length > 1 && <span className="tie small">tied</span>}
+              </span>
               <span className="who" role="cell">
-                <span className="dot" style={{ background: colorOf(r.key) }} />
+                <Mark k={r.key} size={30} />
                 <span>
                   <b>{r.name}</b>
                   <span className="small muted meta">{r.maker} · {r.mode}{r.open && <span className="tag open"> · open weights</span>}</span>
@@ -82,7 +86,7 @@ export function Leaderboard() {
           ))}
         </div>
         <p className="small muted foot">
-          Bars show the mean; the thin bracket is a 95% bootstrap interval over photos, so overlapping brackets mean the gap could be luck. "Typical miss" is the median distance. Every model saw the identical {META.photos} photos.
+          Bars show the mean; the thin bracket is a 95% bootstrap interval over photos. "Tied" means a paired test on the same photos cannot separate a model from the leader. "Typical miss" is the median distance. Every model saw the identical {META.photos} photos.
         </p>
       </div>
     </section>

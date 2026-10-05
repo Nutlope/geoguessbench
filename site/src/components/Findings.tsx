@@ -1,10 +1,10 @@
-import { ROWS, colorOf, fmt, km, pct } from "../data";
+import { ROWS, fmt, km, pct } from "../data";
+import { Mark } from "./Mark";
 
 /** Headline findings, computed from the results so the copy never drifts from the data. */
 export function Findings() {
   const [a, b, c] = ROWS;
-  const overlap = (x: typeof a, y: typeof a) => x.gameCi[0] <= y.gameCi[1] && y.gameCi[0] <= x.gameCi[1];
-  const topTie = ROWS.filter((r) => overlap(r, a));
+  const topTie = ROWS.filter((r) => r.tiedWithTop);
   const cheapestTop = [...topTie].sort((x, y) => x.costPerGame - y.costPerGame)[0];
   const priciestTop = [...topTie].sort((x, y) => y.costPerGame - x.costPerGame)[0];
 
@@ -21,7 +21,7 @@ export function Findings() {
       big: topTie.length > 1 ? `${topTie.length}-way tie` : a.name,
       title: topTie.length > 1 ? "There is no clear winner at the top" : `${a.name} leads`,
       body: topTie.length > 1
-        ? `${topTie.map((r) => r.name).join(", ")} sit within each other's error bars. ${cheapestTop.name} gets there for ${Math.round(priciestTop.costPerGame / cheapestTop.costPerGame)}x less than ${priciestTop.name}.`
+        ? `${topTie.map((r) => r.name).join(", ")} are statistically tied: on the same photos, the gap between them is within noise. ${cheapestTop.name} gets there for ${Math.round(priciestTop.costPerGame / cheapestTop.costPerGame)}x less than ${priciestTop.name}.`
         : `${a.name} beats ${b.name} by ${fmt(a.gameMean - b.gameMean)} points a game, ahead of ${c.name}.`,
       keys: topTie.map((r) => r.key),
     },
@@ -53,7 +53,7 @@ export function Findings() {
         <div className="findings">
           {cards.map((f) => (
             <article key={f.title} className="finding">
-              <span className="f-dots">{[...new Set(f.keys)].map((k) => <span key={k} className="dot" style={{ background: colorOf(k) }} />)}</span>
+              <span className="f-dots">{[...new Set(f.keys)].map((k) => <Mark key={k} k={k} size={24} />)}</span>
               <b className="f-big">{f.big}</b>
               <h3>{f.title}</h3>
               <p className="small ink2">{f.body}</p>

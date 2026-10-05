@@ -29,6 +29,7 @@
     "@types/topojson-client": "^3.1.5",
     "@vitejs/plugin-react": "^6.1.1",
     "oxlint": "^1.81.0",
+    "simple-icons": "^16.34.0",
     "typescript": "~6.0.2",
     "vite": "^8.3.0"
   }

@@ -3,14 +3,15 @@ import results from "./data/results.json";
 export type Row = {
   key: string; name: string; maker: string; open: boolean; mode: string; provider: string; model: string;
   n: number; meanPts: number; ci: [number, number]; gameMean: number; gameCi: [number, number];
-  byTier: Record<string, { n: number; meanPts: number; gameMean: number; medianKm: number; countryAcc: number }>; gameBest: number; perfectish: number;
+  byTier: Record<string, { n: number; meanPts: number; gameMean: number; gameCi: [number, number]; medianKm: number; countryAcc: number }>; gameBest: number; perfectish: number;
   medianKm: number; countryAcc: number; within: Record<string, number>; parseFail: number;
+  gapToTop: number; gapCi: [number, number]; tiedWithTop: boolean;
   costPerGame: number; costTotal: number; latencyMedianS: number; outTokMean: number;
   byRegion: Record<string, { n: number; mean: number }>;
 };
 export type Meta = {
   version: string; updated: string; photos: number; games: number; countries: number;
-  regions: Record<string, number>; tiers: Record<string, number>; sources: Record<string, number>; totalCalls: number; totalCost: number;
+  regions: Record<string, number>; tiers: Record<string, number>; sources: Record<string, number>; totalCalls: number; totalCost: number; rejectedByHand: number;
   thresholds: number[]; curveKm: number[];
 };
 export type Guess = { lat: number | null; lng: number | null; km: number | null; pts: number; place: string | null; country: string | null; said: string };
@@ -53,8 +54,7 @@ export function km(n: number | null): string {
 }
 export function money(n: number): string {
   if (n === 0) return "free";
-  if (n < 0.01) return `$${n.toFixed(4)}`;
-  if (n < 1) return `$${n.toFixed(3)}`;
+  if (n < 1) return `$${+n.toPrecision(2)}`;
   return `$${n.toFixed(2)}`;
 }
 export function scaleWord(k: number | null): string {

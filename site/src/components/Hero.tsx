@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { geoEqualEarth } from "d3-geo";
 import { ROWS, META, colorOf, fmt, km, loadPhotos, type Photo } from "../data";
 import { WorldMap } from "./WorldMap";
+import { Mark, MarkPin } from "./Mark";
 import { arc } from "../geo";
 
 const W = 640, H = 460;
@@ -73,7 +74,7 @@ export function Hero() {
       </nav>
 
       <div className="wrap hero-copy" id="top">
-        <h1>Can AI play <span className="u">GeoGuessr?</span></h1>
+        <h1>Can AI play GeoGuessr?</h1>
         <p className="lead">
           We showed {ROWS.length} AI models the same {META.photos} street photos, from capital cities to farm tracks in {META.countries} countries, and scored every pin like the real game.
         </p>
@@ -103,32 +104,40 @@ export function Hero() {
                           <path key={r.key} d={path(arc([g.lng, g.lat], [p.lng, p.lat])) ?? ""} fill="none" stroke={colorOf(r.key)} strokeWidth={hover === r.key ? 2.4 : 1.2} strokeDasharray="3 3" opacity={hover && hover !== r.key ? 0.15 : 0.7} className="draw" style={{ animationDelay: `${300 + k * 90}ms` }} />
                         ) : null,
                       )}
-                      {(() => { const [x, y] = pr([p.lng, p.lat]) ?? [0, 0]; return (
-                        <g transform={`translate(${x},${y})`} className="truth-pin">
-                          <circle r={16} fill="none" stroke="var(--ink)" strokeWidth={1} opacity={0.3} className="pulse" />
-                          <circle r={7} fill="var(--card)" stroke="var(--ink)" strokeWidth={2.5} />
-                          <circle r={2} fill="var(--ink)" />
-                        </g>
-                      ); })()}
-                      {order.map(({ r, g }, k) => {
+                      {/* farthest first, so the closest pins sit on top */}
+                      {[...order].reverse().map(({ r, g }, k) => {
                         if (g.lat == null || g.lng == null) return null;
                         const [x, y] = pr([g.lng, g.lat]) ?? [0, 0];
+                        const on = hover === r.key;
                         return (
-                          <g key={r.key} transform={`translate(${x},${y})`} opacity={hover && hover !== r.key ? 0.2 : 1}>
-                            <circle r={hover === r.key ? 7 : 5.5} fill={colorOf(r.key)} stroke="var(--card)" strokeWidth={1.8} className="drop" style={{ animationDelay: `${200 + k * 90}ms` }} />
+                          <g key={r.key} transform={`translate(${x},${y})`}>
+                            <g className="drop" style={{ animationDelay: `${200 + (order.length - k) * 80}ms` }}>
+                              <MarkPin k={r.key} r={on ? 12 : 9.5} dim={!!hover && !on} />
+                            </g>
                           </g>
                         );
                       })}
+                      {(() => { const [x, y] = pr([p.lng, p.lat]) ?? [0, 0]; return (
+                        <g transform={`translate(${x},${y})`} className="truth-pin">
+                          <circle r={6} fill="var(--ink)" stroke="var(--card)" strokeWidth={2} />
+                          <circle r={2} fill="var(--card)" />
+                        </g>
+                      ); })()}
                     </g>
                   )}
                 </WorldMap>
+                <div className="map-key small"><svg width="14" height="14" viewBox="-7 -7 14 14" aria-hidden><circle r="6" fill="var(--ink)" stroke="var(--card)" strokeWidth="2" /><circle r="2" fill="var(--card)" /></svg> Where the photo was taken</div>
+              </div>
+              <div className="round-list-head small muted">
+                <span>Game {p.game}, round {p.round}</span>
+                <span>Points this round, out of 5,000</span>
               </div>
               <ol className="round-list">
                 {order.map(({ r, g }, k) => (
-                  <li key={r.key} onMouseEnter={() => setHover(r.key)} onMouseLeave={() => setHover(null)} className="fade-in" style={{ animationDelay: `${200 + k * 60}ms` }}>
-                    <span className="dot" style={{ background: colorOf(r.key) }} />
+                  <li key={r.key} tabIndex={0} onMouseEnter={() => setHover(r.key)} onMouseLeave={() => setHover(null)} onFocus={() => setHover(r.key)} onBlur={() => setHover(null)} className="fade-in" style={{ animationDelay: `${200 + k * 60}ms` }}>
+                    <Mark k={r.key} size={22} />
                     <span className="nm">{r.name}</span>
-                    <span className="gp muted">{g.place ?? "no answer"}</span>
+                    <span className="gp muted">{g.place ?? (g.lat == null ? "no answer" : g.country ?? "somewhere else")}</span>
                     <span className="km num">{km(g.km)}</span>
                     <span className="pts num">{fmt(g.pts)}</span>
                   </li>

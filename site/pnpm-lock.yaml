@@ -60,6 +60,9 @@ importers:
       oxlint:
         specifier: ^1.81.0
         version: 1.86.0
+      simple-icons:
+        specifier: ^16.34.0
+        version: 16.34.0
       typescript:
         specifier: ~6.0.2
         version: 6.0.3
@@ -514,6 +517,10 @@ packages:
   scheduler@0.28.0:
     resolution: {integrity: sha512-juorfCmIkIw8tT+p5BXSm6PJjQF/ycEYmKyzURCIt/RaZIhL+PulbQ9Yu2z1HdOJDdqDTlxA1+xKBmHXJsczAw==}
 
+  simple-icons@16.34.0:
+    resolution: {integrity: sha512-UTxKn0PVspk84B2hHF3Dqiqht1yDjJmDc/t4cO7PyCQxCMk6OjEu95pnpGjhLaGeQ4qBrGASbefTIe/+czrX7g==}
+    engines: {node: '>=0.12.18'}
+
   source-map-js@1.2.2:
     resolution: {integrity: sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==}
     engines: {node: '>=0.10.0'}
@@ -897,6 +904,8 @@ snapshots:
       '@rolldown/binding-win32-x64-msvc': 1.2.12
 
   scheduler@0.28.0: {}
+
+  simple-icons@16.34.0: {}
 
   source-map-js@1.2.2: {}
 

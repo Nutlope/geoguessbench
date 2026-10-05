@@ -24,7 +24,7 @@ export default function App() {
         <Method />
       </main>
       <footer className="wrap footer small">
-        <span>GeoGuessBench, a sibling of <a href="https://geoduel-alpha.vercel.app">GeoDuel</a>, where you can play against the same models live.</span>
+        <span>GeoGuessBench is a sibling of <a href="https://geoduel-alpha.vercel.app">GeoDuel</a>, where you can race the open models live on fresh photos.</span>
         <span className="muted">Photos from Panoramax and KartaView contributors, CC BY-SA 4.0. Map data Natural Earth.</span>
       </footer>
     </>

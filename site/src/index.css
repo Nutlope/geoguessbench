@@ -29,7 +29,8 @@
 }
 
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+html { -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: no-preference) { html:focus-within { scroll-behavior: smooth; } }
 body {
   margin: 0;
   background: var(--paper);
@@ -40,17 +41,6 @@ body {
   font-feature-settings: "kern" 1;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-}
-/* faint survey grid behind everything */
-body::before {
-  content: "";
-  position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background-image:
-    linear-gradient(var(--rule-2) 1px, transparent 1px),
-    linear-gradient(90deg, var(--rule-2) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse at 50% 0%, #000 0%, transparent 70%);
-  opacity: 0.55;
 }
 img { display: block; max-width: 100%; }
 a { color: inherit; text-decoration-color: var(--rule); text-underline-offset: 3px; }
@@ -69,14 +59,13 @@ p { margin: 0; }
 .small { font-size: var(--f-sm); }
 .muted { color: var(--ink-3); }
 .ink2 { color: var(--ink-2); }
-.num, .ax, .h2h-c, .reg-c { font-variant-numeric: tabular-nums; }
-.stats b, .lt b { font-variant-numeric: normal; }
+/* Schibsted's tabular figures pad commas and points, so numbers stay proportional. */
+.num { font-variant-numeric: proportional-nums; }
 
 /* a section heading: number, title, lead */
 .head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr); gap: 24px 48px; align-items: end; margin-bottom: 48px; }
 .head .kicker { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; font-size: var(--f-sm); color: var(--ink-3); font-weight: 500; }
 .head .kicker b { color: var(--red); font-weight: 600; }
-.head .kicker::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
 @media (max-width: 820px) { .head { grid-template-columns: 1fr; } }
 
 .card { background: var(--card); border: 1px solid var(--rule); border-radius: var(--radius); }
