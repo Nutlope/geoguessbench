@@ -1,0 +1,37 @@
+<p align="center">
+  <img alt="GeoGuessBench" src="docs/img/hero.png">
+</p>
+
+<h1 align="center">GeoGuessBench</h1>
+
+<p align="center">An open GeoGuessr benchmark for AI models: the same street photos for every model, scored with GeoGuessr's own curve, published as a one-page site.</p>
+
+## Tech stack
+
+- Node 24 + TypeScript scripts (tsx), no framework on the pipeline side
+- Frozen photo set from Panoramax and KartaView (CC BY-SA 4.0), re-encoded to strip EXIF, gated by a vision check, then reviewed by eye
+- Together AI for open models, the Anthropic and OpenAI SDKs for closed ones, all resumable JSONL runs
+- Scoring: 5000 * e^(-km / 1492.7), bootstrap 95% intervals, fixed five-photo games
+- Site: Vite + React, hand-drawn SVG charts on d3-geo (Equal Earth), no chart library
+
+## Cloning & running
+
+1. Clone: `git clone <repo> geoguessbench && cd geoguessbench && pnpm install && pnpm -C site install`
+2. Keys: `cp .env.example .env.local` and fill in Together, Anthropic and (optionally) OpenAI
+3. Photos: `pnpm dataset --tier city --target 100` then `pnpm dataset --tier town --target 150 --per-country 4`
+4. Models: `pnpm bench --all` (or `--entries kimi-k3,claude-opus-5-5 --limit 10` for a smoke test)
+5. Score and view: `pnpm score` then `pnpm site` and open http://localhost:5173
+
+Add a model by appending one entry to `bench/entries.ts`; it plays the same photos as everyone else.
+
+## Roadmap
+
+- [ ] add GPT models once there is a working OpenAI key
+- [ ] thinking-mode rows (Opus at high effort, Kimi with reasoning on) next to the fast ones
+- [ ] grow to 500 games with Mapillary, which covers rural roads worldwide
+- [ ] a human baseline from GeoDuel players on the same photos
+- Panning and multi-frame rounds are skipped on purpose: one still keeps every model on identical input.
+
+## License
+
+API keys stay in `.env.local`, which is gitignored; the site is static and calls no API. Code is MIT. Photos belong to their Panoramax and KartaView contributors under CC BY-SA 4.0, credited per photo on the site.

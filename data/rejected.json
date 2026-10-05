@@ -1,0 +1,38 @@
+[
+ {
+  "id": "2c1d09ad2e",
+  "place": "Melbourne",
+  "country": "Australia",
+  "reason": "close-up of a parking sign"
+ },
+ {
+  "id": "4fc73cdd7c",
+  "place": "Valletta",
+  "country": "Malta",
+  "reason": "blank wall panel, nothing to read"
+ },
+ {
+  "id": "a8aa717dc1",
+  "place": "Vancouver",
+  "country": "Canada",
+  "reason": "close-up of a parking sign"
+ },
+ {
+  "id": "1a38600328",
+  "place": "Fiorentino",
+  "country": "San Marino",
+  "reason": "mostly a row of rubbish bins"
+ },
+ {
+  "id": "0fd377c37a",
+  "place": "Portoro\u017e",
+  "country": "Slovenia",
+  "reason": "mostly a parked van"
+ },
+ {
+  "id": "eb77d280bf",
+  "place": "Gembloux",
+  "country": "Belgium",
+  "reason": "close-up of a bike shelter"
+ }
+]

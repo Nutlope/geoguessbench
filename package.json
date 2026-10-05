@@ -1,0 +1,32 @@
+{
+  "name": "geoguessbench",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dataset": "tsx bench/build-dataset.ts",
+    "bench": "tsx bench/run.ts",
+    "score": "tsx bench/score.ts",
+    "site": "pnpm -C site dev",
+    "build": "pnpm -C site build"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "devDependencies": {
+    "@types/d3-geo": "^3.1.1",
+    "@types/node": "^26.6.4",
+    "@types/topojson-client": "^3.1.5",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.131.0",
+    "all-the-cities": "^3.1.0",
+    "d3-geo": "^3.1.1",
+    "openai": "^7.28.0",
+    "p-limit": "^7.3.3",
+    "sharp": "^0.35.5",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2",
+    "world-countries": "^5.1.0"
+  }
+}

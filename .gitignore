@@ -1,0 +1,7 @@
+node_modules
+.env*
+!.env.example
+scratch/
+.next
+out
+.vercel

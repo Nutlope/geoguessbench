@@ -1,0 +1,66 @@
+import { ROWS, colorOf, fmt, km, pct } from "../data";
+
+/** Headline findings, computed from the results so the copy never drifts from the data. */
+export function Findings() {
+  const [a, b, c] = ROWS;
+  const overlap = (x: typeof a, y: typeof a) => x.gameCi[0] <= y.gameCi[1] && y.gameCi[0] <= x.gameCi[1];
+  const topTie = ROWS.filter((r) => overlap(r, a));
+  const cheapestTop = [...topTie].sort((x, y) => x.costPerGame - y.costPerGame)[0];
+  const priciestTop = [...topTie].sort((x, y) => y.costPerGame - x.costPerGame)[0];
+
+  const open = ROWS.filter((r) => r.open);
+  const bestOpen = open[0];
+  const cheapOpen = [...open].filter((r) => r.gameMean >= bestOpen.gameMean * 0.97).sort((x, y) => x.costPerGame - y.costPerGame)[0];
+
+  const cityKm = a.byTier.city?.medianKm, townKm = a.byTier.town?.medianKm;
+  const weakest = ROWS[ROWS.length - 1];
+  const lowCountry = ROWS.filter((r) => r.countryAcc < 0.34);
+
+  const cards = [
+    {
+      big: topTie.length > 1 ? `${topTie.length}-way tie` : a.name,
+      title: topTie.length > 1 ? "There is no clear winner at the top" : `${a.name} leads`,
+      body: topTie.length > 1
+        ? `${topTie.map((r) => r.name).join(", ")} sit within each other's error bars. ${cheapestTop.name} gets there for ${Math.round(priciestTop.costPerGame / cheapestTop.costPerGame)}x less than ${priciestTop.name}.`
+        : `${a.name} beats ${b.name} by ${fmt(a.gameMean - b.gameMean)} points a game, ahead of ${c.name}.`,
+      keys: topTie.map((r) => r.key),
+    },
+    {
+      big: pct(bestOpen.gameMean / a.gameMean),
+      title: "Open models are close behind",
+      body: `${bestOpen.name} scores ${pct(bestOpen.gameMean / a.gameMean)} of the top score. ${cheapOpen.key !== bestOpen.key ? `${cheapOpen.name} is nearly as good at ${Math.round(cheapestTop.costPerGame / cheapOpen.costPerGame)}x less than the cheapest leader.` : ""}`,
+      keys: [bestOpen.key, cheapOpen.key],
+    },
+    {
+      big: `${km(cityKm ?? 0)} vs ${km(townKm ?? 0)}`,
+      title: "Small towns are where models separate",
+      body: `In big cities the leader's typical miss is ${km(cityKm ?? 0)}: they read the skyline and name the street. In small towns it grows to ${km(townKm ?? 0)}.`,
+      keys: [a.key],
+    },
+    {
+      big: `${lowCountry.length || 1} of ${ROWS.length}`,
+      title: "Some models barely find the country",
+      body: lowCountry.length
+        ? `${lowCountry.map((r) => `${r.name} (${pct(r.countryAcc)})`).join(" and ")} put the pin in the right country less than a third of the time.`
+        : `${weakest.name} is last, with the right country ${pct(weakest.countryAcc)} of the time.`,
+      keys: (lowCountry.length ? lowCountry : [weakest]).map((r) => r.key),
+    },
+  ];
+
+  return (
+    <section className="block findings-block">
+      <div className="wrap">
+        <div className="findings">
+          {cards.map((f) => (
+            <article key={f.title} className="finding">
+              <span className="f-dots">{[...new Set(f.keys)].map((k) => <span key={k} className="dot" style={{ background: colorOf(k) }} />)}</span>
+              <b className="f-big">{f.big}</b>
+              <h3>{f.title}</h3>
+              <p className="small ink2">{f.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
