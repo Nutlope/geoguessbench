@@ -42,7 +42,7 @@ export function Explorer() {
         <div className="head">
           <div className="kicker"><b>06</b> Every photo</div>
           <h2>Play along</h2>
-          <p className="lead">All {photos.length || "the"} photos, in game order. Guess first, then open one to see where every model pinned it and why.</p>
+          <p className="lead">Guess first, then see where every model pinned it and why.</p>
         </div>
         <div className="lb-ctl">
           <div className="chips">
@@ -67,7 +67,7 @@ export function Explorer() {
             </button>
           ))}
         </div>
-        <p className="small muted foot">Each tile shows the average score across all {ROWS.length} models, out of 5,000. Use the arrow keys to step through photos once one is open.</p>
+        <p className="small muted foot">Tile number: average score across all models, out of 5,000.</p>
       </div>
       {open && (() => {
         const i = list.findIndex((p) => p.id === open.id);
@@ -145,7 +145,7 @@ function PhotoPanel({ p, pos, onClose, onPrev, onNext }: { p: Photo; pos: string
           ) : (
             <div className="guess-first">
               <h3>Where do you think it is?</h3>
-              <p className="ink2">Take a look first. When you reveal it, you will see every model's pin and the reasoning it gave.</p>
+              
               <button className="chip reveal-cta" onClick={() => setReveal(true)}>Reveal the answer</button>
             </div>
           )}

@@ -62,7 +62,7 @@ export function Value() {
         <div className="head">
           <div className="kicker"><b>05</b> Score for the money</div>
           <h2>What a good guess costs</h2>
-          <p className="lead">API cost of one five-round game against its score. The dashed line links the models nobody beats for the price.</p>
+          <p className="lead">Cost per game against score. The dashed line is the best value.</p>
         </div>
         <div className="value-grid">
           <div className="card chart chart-scroll">
@@ -99,7 +99,7 @@ export function Value() {
           <div className="card regions">
             <div className="regions-head">
               <h3>By region</h3>
-              <p className="small muted">Average points per round, out of 5,000. Darker is better.</p>
+              <p className="small muted">Points per round, out of 5,000.</p>
             </div>
             <div className="reg-scroll">
               <div className="reg-table" style={{ gridTemplateColumns: `minmax(170px, 1.6fr) repeat(${REGIONS.length}, minmax(64px, 1fr))` }}>
@@ -125,7 +125,7 @@ export function Value() {
                 ))}
               </div>
             </div>
-            <p className="small muted">Pale columns have fewer than {SMALL} photos, so a single lucky or unlucky guess moves them a lot.</p>
+            <p className="small muted">Pale columns: too few photos to trust.</p>
           </div>
         </div>
       </div>

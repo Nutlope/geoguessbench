@@ -30,7 +30,7 @@ export function Leaderboard() {
         <div className="head">
           <div className="kicker"><b>01</b> Leaderboard</div>
           <h2>Who finds the spot</h2>
-          <p className="lead">Average score for a five-round game, out of 25,000. A pin on the exact spot earns 5,000 a round; 1,000 km off earns about 2,500.</p>
+          <p className="lead">Average score per five-round game, out of 25,000.</p>
         </div>
 
         <div className="lb-ctl">
@@ -85,9 +85,7 @@ export function Leaderboard() {
             </div>
           ))}
         </div>
-        <p className="small muted foot">
-          Bars show the mean; the thin bracket is a 95% bootstrap interval over photos. "Tied" means a paired test on the same photos cannot separate a model from the leader. "Typical miss" is the median distance. Every model saw the identical {META.photos} photos.
-        </p>
+        <p className="small muted foot">Bracket: 95% interval. "Tied": not separable from the leader.</p>
       </div>
     </section>
   );

@@ -154,7 +154,8 @@
 @media (max-width: 860px) { .panel { grid-template-columns: 1fr; } }
 
 /* ---------- method ---------- */
-.method { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.method { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: start; }
+@media (max-width: 1000px) { .method { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 860px) { .method { grid-template-columns: 1fr; } }
 .m { padding: 24px; display: flex; flex-direction: column; gap: 12px; }
 .m p, .m li { color: var(--ink-2); }

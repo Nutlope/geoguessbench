@@ -19,7 +19,7 @@ export function Matchups() {
         <div className="head">
           <div className="kicker"><b>04</b> Head to head</div>
           <h2>Who wins the duel</h2>
-          <p className="lead">The photos are dealt into {META.games} fixed games of five. Each cell is how often the row model outscored the column model, game for game.</p>
+          <p className="lead">How often the row model beat the column model, across {META.games} games.</p>
         </div>
         <div className="card h2h-card">
           <div className="h2h-read">
@@ -28,7 +28,7 @@ export function Matchups() {
                 <Mark k={a.key} size={20} /> <b style={{ color: colorOf(a.key) }}>{a.name}</b> beat <Mark k={b.key} size={20} /> <b style={{ color: colorOf(b.key) }}>{b.name}</b> in {pct(v)} of the {META.games} games.
               </p>
             ) : (
-              <p className="muted">Hover or tap a cell to read it. Green: the row model usually wins. Red: it usually loses.</p>
+              <p className="muted">Tap a cell. Green wins, red loses.</p>
             )}
           </div>
           <div className="h2h-scroll">
@@ -63,7 +63,7 @@ export function Matchups() {
             </div>
           </div>
         </div>
-        <p className="small muted foot">Numbers are percentages of games won. A tie in a game counts as half a win for each side.</p>
+        
       </div>
     </section>
   );

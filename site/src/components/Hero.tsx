@@ -76,7 +76,7 @@ export function Hero() {
       <div className="wrap hero-copy" id="top">
         <h1>Can AI play GeoGuessr?</h1>
         <p className="lead">
-          We showed {ROWS.length} AI models the same {META.photos} street photos, from capital cities to farm tracks in {META.countries} countries, and scored every pin like the real game.
+          {ROWS.length} AI models, {META.photos} street photos, {META.countries} countries. Scored like the real game.
         </p>
         <p className="meta-line small muted">
           {META.games} games · {fmt(META.totalCalls)} guesses · ${META.totalCost.toFixed(2)} of API time · updated {META.updated}

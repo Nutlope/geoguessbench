@@ -29,7 +29,7 @@ export function DistanceLadder() {
         <div className="head">
           <div className="kicker"><b>02</b> The distance ladder</div>
           <h2>How close is close?</h2>
-          <p className="lead">Each line shows the share of a model's guesses that landed within a given distance of the truth. Higher on the left is better.</p>
+          <p className="lead">Share of guesses within each distance. Higher is better.</p>
         </div>
         <div className="card chart">
           <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: "auto" }} role="img" aria-label="Share of guesses within each distance, per model">
@@ -93,7 +93,7 @@ export function DistanceLadder() {
             );
           })}
         </div>
-        <p className="small muted foot">Bottom row: the best model at each distance and the share of its guesses inside it. Hover or tap a model to trace its line.</p>
+        <p className="small muted foot">Tap a model to trace its line.</p>
       </div>
     </section>
   );

@@ -26,7 +26,7 @@ export function MissMap() {
         <div className="head">
           <div className="kicker"><b>03</b> Where the misses land</div>
           <h2>Every guess, one line each</h2>
-          <p className="lead">Each ring is a photo. A line runs from it to where the model put its pin, so short lines are good. Pick a model.</p>
+          <p className="lead">Each line runs from a photo to the model's pin. Shorter is better.</p>
         </div>
         <div className="chips miss-chips">
           {ROWS.map((r) => (
