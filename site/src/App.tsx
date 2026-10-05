@@ -7,6 +7,7 @@ import { Matchups } from "./components/Matchups";
 import { Value } from "./components/Value";
 import { Explorer } from "./components/Explorer";
 import { Method } from "./components/Method";
+import { Footer } from "./components/Footer";
 import "./site.css";
 
 export default function App() {
@@ -23,10 +24,7 @@ export default function App() {
         <Explorer />
         <Method />
       </main>
-      <footer className="wrap footer small">
-        <span>A sibling of <a href="https://geoduel-alpha.vercel.app">GeoDuel</a>.</span>
-        <span className="muted">Photos: Panoramax and KartaView contributors, CC BY-SA 4.0. Map: Natural Earth.</span>
-      </footer>
+      <Footer />
     </>
   );
 }
