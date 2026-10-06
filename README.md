@@ -4,7 +4,7 @@
 
 <h1 align="center">GeoGuessBench</h1>
 
-<p align="center">An open GeoGuessr benchmark for AI models: the same street photos for every model, scored with GeoGuessr's own curve, published as a one-page site. <a href="https://geoguessbench.vercel.app">geoguessbench.vercel.app</a></p>
+<p align="center">An open GeoGuessr benchmark for AI models: the same street photos for every model. <a href="https://geoguessbench.vercel.app">geoguessbench.vercel.app</a></p>
 
 ## Tech stack
 
