@@ -7,7 +7,8 @@ export function Findings() {
   const open = ROWS.filter((r) => r.open);
   const bestOpen = open[0];
   // Best value: the cheapest model within 5% of the leader's score.
-  const value = [...ROWS].filter((r) => r.gameMean >= a.gameMean * 0.95).sort((x, y) => x.costPerGame - y.costPerGame)[0];
+  // Skips models already featured, so each card names someone different.
+  const value = [...ROWS].filter((r) => r.gameMean >= a.gameMean * 0.95 && r.key !== a.key && r.key !== bestOpen.key).sort((x, y) => x.costPerGame - y.costPerGame)[0] ?? b;
   const cityKm = a.byTier.city?.medianKm ?? 0, townKm = a.byTier.town?.medianKm ?? 0;
 
   const cards = [
