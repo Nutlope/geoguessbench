@@ -24,7 +24,6 @@ function CurveSpark() {
 
 export function Method() {
   const [open, setOpen] = useState(false);
-  const europe = Math.round(((META.regions.Europe ?? 0) / META.photos) * 100);
   return (
     <section className="block" id="method">
       <div className="wrap">
@@ -68,16 +67,6 @@ export function Method() {
               <li><span>Guesses</span><b className="tnum">{fmt(META.totalCalls)}</b></li>
             </ul>
           </article>
-        </div>
-
-        <div className="caveats card">
-          <span className="m-label">Read with care</span>
-          <ul>
-            <li>{europe}% of photos are in Europe</li>
-            <li>Public photos may be in training data</li>
-            <li>One still photo per round, no panning</li>
-            <li>DeepSeek has no "medium", so it runs at 50 of 100</li>
-          </ul>
         </div>
 
         <div className={`prompt card${open ? " open" : ""}`}>

@@ -215,9 +215,6 @@
 .m-facts { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-2); }
 .m-facts li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--line-2); color: var(--ink-2); }
 .m-facts b { color: var(--ink); font-weight: 600; }
-.caveats { margin-top: 16px; padding: 14px 22px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; background: var(--surface); box-shadow: none; }
-.caveats ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.caveats li { padding: 4px 11px; border-radius: 99px; background: var(--bg); border: 1px solid var(--line); font-size: var(--f-sm); color: var(--ink-2); }
 .prompt { margin-top: 16px; overflow: hidden; box-shadow: none; }
 .prompt-head { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 22px; background: none; border: 0; cursor: pointer; text-align: left; }
 .prompt-head:hover .chip { border-color: #cfcec9; }
