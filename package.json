@@ -10,7 +10,8 @@
     "site": "pnpm -C site dev",
     "build": "pnpm -C site build",
     "test": "tsx --test bench/test/*.test.ts",
-    "og": "tsx bench/og.ts"
+    "og": "tsx bench/og.ts",
+    "share": "tsx bench/share-images.ts"
   },
   "packageManager": "pnpm@9.15.0",
   "devDependencies": {

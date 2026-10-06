@@ -21,7 +21,7 @@
 2. Keys: `cp .env.example .env.local` and fill in Together, Anthropic and (optionally) OpenAI
 3. Photos: `pnpm dataset --tier city --target 100` then `pnpm dataset --tier town --target 150 --per-country 4`
 4. Models: `pnpm bench --all` (or `--entries kimi-k3,claude-opus-5-5 --limit 10` for a smoke test)
-5. Score and check: `pnpm score` then `pnpm test`, and `pnpm og` to redraw the link preview
+5. Score and check: `pnpm score` then `pnpm test`; `pnpm og` and `pnpm share` redraw the link preview and the tweet images
 6. View: `pnpm site` and open http://localhost:5173
 
 Add a model by appending one entry to `bench/entries.ts`; it plays the same photos as everyone else.
