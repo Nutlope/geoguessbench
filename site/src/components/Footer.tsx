@@ -20,11 +20,6 @@ export function Footer() {
           <a href="#method">Method</a>
         </nav>
         <div className="f-col small">
-          <span className="f-h">Play it</span>
-          <a href="https://geoduel-alpha.vercel.app" target="_blank" rel="noreferrer">GeoDuel</a>
-          <span className="f-dim">Race the open models live</span>
-        </div>
-        <div className="f-col small">
           <span className="f-h">Credits</span>
           <p className="f-built">
             Built by <a href="https://x.com/youssefuiux" target="_blank" rel="noreferrer" className="f-x">{X}Youssef</a> and <a href="https://x.com/nutlope" target="_blank" rel="noreferrer" className="f-x">{X}Hassan</a>

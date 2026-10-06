@@ -231,12 +231,11 @@
 .footer .wordmark { color: #fff; }
 .footer .wm-2 { color: #8b8a85; }
 .footer .logo { color: #fff; }
-.footer-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)); gap: 32px; padding-bottom: 48px; }
+.footer-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) repeat(2, minmax(0, 1fr)); gap: 32px; padding-bottom: 48px; }
 .f-brand { display: flex; flex-direction: column; gap: 12px; }
 .f-brand p { color: #9d9c96; max-width: 30ch; }
 .f-col { display: flex; flex-direction: column; gap: 10px; }
 .f-h { color: #8b8a85; font-weight: 500; }
-.f-dim { color: #8b8a85; }
 .f-x { display: inline-flex; align-items: center; gap: 6px; }
 .f-built { color: #f4f4f2; line-height: 1.9; }
 .f-built .f-x { gap: 5px; vertical-align: -1px; }
