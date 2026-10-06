@@ -69,7 +69,7 @@ export function Hero() {
       <div className="wrap hero-board">
         <Leaderboard />
         <p className="hero-meta small muted tnum">
-          {fmt(META.totalCalls)} guesses across {META.games} games in {META.countries} countries · ${META.totalCost.toFixed(2)} of API time
+          {fmt(META.totalCalls)} guesses across {META.games} games in {META.countries} countries
         </p>
       </div>
     </header>

@@ -66,7 +66,6 @@ export function Method() {
             <ul className="m-facts small">
               <li><span>Models</span><b className="tnum">{ROWS.length}</b></li>
               <li><span>Guesses</span><b className="tnum">{fmt(META.totalCalls)}</b></li>
-              <li><span>API cost</span><b className="tnum">${META.totalCost.toFixed(2)}</b></li>
             </ul>
           </article>
         </div>
