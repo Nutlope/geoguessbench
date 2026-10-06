@@ -15,6 +15,14 @@
 /* ---------- hero ---------- */
 .hero-copy { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 18px; padding-top: clamp(48px, 7vw, 88px); }
 .h1-2 { color: var(--ink-3); }
+.powered { display: inline-flex; align-items: center; gap: 8px; font-size: var(--f-sm); font-weight: 500; color: var(--ink-3); }
+.powered svg { width: auto; flex-shrink: 0; transition: opacity .15s; }
+.hero-pill { height: 32px; padding: 0 14px 0 12px; border: 1px solid var(--line); border-radius: 99px; background: var(--surface); color: var(--ink-2); box-shadow: 0 1px 2px rgba(17, 17, 16, 0.04); transition: border-color .15s; }
+.hero-pill svg { color: var(--ink); }
+.hero-pill:hover { border-color: #cfcec9; }
+.footer .f-powered { margin-top: 4px; color: #9d9c96; }
+.footer .f-powered svg { color: #fff; }
+.footer .f-powered:hover { text-decoration: none; color: #c9c8c3; }
 .hero .lead { max-width: 44ch; text-wrap: balance; }
 .hero-ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 6px; }
 .hero-board { margin-top: clamp(40px, 5vw, 56px); }

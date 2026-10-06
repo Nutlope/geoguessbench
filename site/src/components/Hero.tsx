@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { META, fmt } from "../data";
 import { Wordmark } from "./Brand";
 import { Leaderboard } from "./Leaderboard";
+import { PoweredByTogether } from "./Together";
 
 const LINKS = [
   ["#leaderboard", "Ranking"],
@@ -58,6 +59,7 @@ export function Hero() {
   return (
     <header className="hero" id="top">
       <div className="wrap hero-copy">
+        <PoweredByTogether className="hero-pill" />
         <h1>Can AI play <span className="h1-2">GeoGuessr?</span></h1>
         <p className="lead">We show every model the same street photos and score its pin with GeoGuessr's own formula.</p>
         <div className="hero-ctas">
