@@ -1,17 +1,26 @@
 import { useMemo, useState } from "react";
-import { ROWS, META, colorOf, fmt, km, pct, money } from "../data";
+import { ROWS, META, colorOf, fmt, km, pct, money, type Row } from "../data";
 import { Mark } from "./Mark";
+import { ModelDrawer } from "./ModelDrawer";
 
-type Filter = "all" | "open" | "closed";
+type Who = "all" | "closed" | "open";
 type Tier = "all" | "city" | "town";
 const MAX = 25000;
 
+type View = { r: Row; game: number; ci: [number, number]; medianKm: number; country: number };
+
+/** Strict order: score, then the smaller typical miss. No shared places. */
+function rank(view: View[]): View[] {
+  return [...view].sort((a, b) => b.game - a.game || a.medianKm - b.medianKm);
+}
+
 export function Leaderboard() {
-  const [filter, setFilter] = useState<Filter>("all");
+  const [who, setWho] = useState<Who>("all");
   const [tier, setTier] = useState<Tier>("all");
+  const [open, setOpen] = useState<string | null>(null);
 
   const rows = useMemo(() => {
-    const view = ROWS.filter((r) => filter === "all" || (filter === "open") === r.open).map((r) => {
+    const view: View[] = ROWS.filter((r) => who === "all" || (who === "open") === r.open).map((r) => {
       const t = tier === "all" ? null : r.byTier[tier];
       return {
         r,
@@ -21,72 +30,80 @@ export function Leaderboard() {
         country: t ? t.countryAcc : r.countryAcc,
       };
     });
-    return view.sort((a, b) => b.game - a.game);
-  }, [filter, tier]);
+    return rank(view);
+  }, [who, tier]);
+
+  const photos = tier === "all" ? META.photos : META.tiers[tier];
 
   return (
-    <section className="block" id="leaderboard">
-      <div className="wrap">
-        <div className="head">
-          <div className="kicker"><b>01</b> Leaderboard</div>
-          <h2>Who finds the spot</h2>
-          <p className="lead">Average score per five-round game, out of 25,000.</p>
+    <div className="lb card" id="leaderboard">
+      <div className="lb-top">
+        <div className="lb-title">
+          <h3>Overall ranking</h3>
+          <p className="small muted">Average score per five-round game, out of 25,000 · {photos} photos · select a model for details</p>
         </div>
-
-        <div className="lb-ctl">
-          <div className="chips" role="group" aria-label="Model type">
-            {(["all", "open", "closed"] as Filter[]).map((f) => (
-              <button key={f} className="chip" aria-pressed={filter === f} onClick={() => setFilter(f)}>
-                {f === "all" ? "All models" : f === "open" ? "Open weights" : "Closed"}
+        <div className="lb-filters">
+          <div className="seg" role="group" aria-label="Model type">
+            {(["all", "closed", "open"] as Who[]).map((f) => (
+              <button key={f} aria-pressed={who === f} onClick={() => setWho(f)}>
+                {f === "all" ? "All models" : f === "closed" ? "Closed" : "Open weights"}
               </button>
             ))}
           </div>
-          <div className="chips" role="group" aria-label="Photo set">
+          <div className="seg" role="group" aria-label="Photo set">
             {(["all", "city", "town"] as Tier[]).map((t) => (
-              <button key={t} className="chip" aria-pressed={tier === t} onClick={() => setTier(t)}>
-                {t === "all" ? `All ${META.photos} photos` : t === "city" ? `Big cities (${META.tiers.city})` : `Small towns (${META.tiers.town})`}
+              <button key={t} aria-pressed={tier === t} onClick={() => setTier(t)}>
+                {t === "all" ? "All photos" : t === "city" ? "Cities" : "Small towns"}
               </button>
             ))}
           </div>
         </div>
-
-        <div className="lb card" role="table" aria-label="Leaderboard">
-          <div className="lb-row lb-hd small muted" role="row">
-            <span role="columnheader">#</span>
-            <span role="columnheader">Model</span>
-            <span role="columnheader">Score per game, out of 25,000</span>
-            <span role="columnheader" className="r">Right country</span>
-            <span role="columnheader" className="r">Typical miss</span>
-            <span role="columnheader" className="r">Cost per game</span>
-          </div>
-          {rows.map(({ r, game, ci, medianKm, country }, i) => (
-            <div className="lb-row" role="row" key={r.key}>
-              <span className="rank" role="cell">
-                {filter === "all" && tier === "all" && r.tiedWithTop ? "1" : i + 1}
-                {filter === "all" && tier === "all" && r.tiedWithTop && ROWS.filter((x) => x.tiedWithTop).length > 1 && <span className="tie small">tied</span>}
-              </span>
-              <span className="who" role="cell">
-                <Mark k={r.key} size={30} />
-                <span>
-                  <b>{r.name}</b>
-                  <span className="small muted meta">{r.maker} · {r.mode}{r.open && <span className="tag open"> · open weights</span>}</span>
-                </span>
-              </span>
-              <span className="bar" role="cell" title={ci ? `95% interval ${fmt(ci[0])} to ${fmt(ci[1])}` : undefined}>
-                <span className="track">
-                  <span className="fill" style={{ width: `${(game / MAX) * 100}%`, background: colorOf(r.key) }} />
-                  {ci && <span className="ci" style={{ left: `${(ci[0] / MAX) * 100}%`, width: `${((ci[1] - ci[0]) / MAX) * 100}%` }} />}
-                </span>
-                <b className="num">{fmt(game)}</b>
-              </span>
-              <span className="r num" role="cell">{pct(country)}</span>
-              <span className="r num" role="cell">{km(medianKm)}</span>
-              <span className="r num" role="cell">{money(r.costPerGame)}</span>
-            </div>
-          ))}
-        </div>
-        <p className="small muted foot">Bracket: 95% interval. "Tied": not separable from the leader.</p>
       </div>
-    </section>
+
+      <div className="lb-table" role="table" aria-label="Leaderboard">
+        <div className="lb-row lb-hd" role="row">
+          <span role="columnheader">Rank</span>
+          <span role="columnheader">Model</span>
+          <span role="columnheader">Score</span>
+          <span role="columnheader" className="r">Right country</span>
+          <span role="columnheader" className="r">Typical miss</span>
+          <span role="columnheader" className="r">Cost / game</span>
+        </div>
+        {rows.map(({ r, game, ci, medianKm, country }, i) => (
+          <div
+            className={`lb-row clickable${i < 3 ? " podium" : ""}`}
+            role="row"
+            key={r.key}
+            tabIndex={0}
+            onClick={() => setOpen(r.key)}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen(r.key); } }}
+            aria-label={`${r.name}, rank ${i + 1}. Open details`}
+          >
+            <span className="rank tnum" role="cell">{i + 1}</span>
+            <span className="who" role="cell">
+              <Mark k={r.key} size={30} />
+              <span className="who-txt">
+                <b>{r.name}</b>
+                <span className="small muted">{r.maker}{r.open && <span className="tag open">Open</span>}</span>
+              </span>
+            </span>
+            <span className="bar" role="cell" title={`95% range ${fmt(ci[0])} to ${fmt(ci[1])}`}>
+              <span className="track">
+                <span className="fill" style={{ width: `${(game / MAX) * 100}%`, background: colorOf(r.key) }} />
+                <span className="ci" style={{ left: `${(ci[0] / MAX) * 100}%`, width: `${((ci[1] - ci[0]) / MAX) * 100}%` }} />
+              </span>
+              <b className="tnum">{fmt(game)}</b>
+            </span>
+            <span className="r tnum" role="cell">{pct(country)}</span>
+            <span className="r tnum" role="cell">{km(medianKm)}</span>
+            <span className="r tnum" role="cell">{money(r.costPerGame)}</span>
+          </div>
+        ))}
+      </div>
+      {open && <ModelDrawer k={open} onClose={() => setOpen(null)} />}
+      <p className="lb-foot small muted">
+        Every model saw the same photos at medium reasoning effort. The thin bracket on each bar is the 95% range across photos.
+      </p>
+    </div>
   );
 }

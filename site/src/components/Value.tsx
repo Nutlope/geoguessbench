@@ -60,28 +60,30 @@ export function Value() {
     <section className="block" id="value">
       <div className="wrap">
         <div className="head">
-          <div className="kicker"><b>05</b> Score for the money</div>
-          <h2>What a good guess costs</h2>
-          <p className="lead">Cost per game against score. The dashed line is the best value.</p>
+          <div>
+            <span className="label">Cost</span>
+            <h2>What a good guess costs</h2>
+            <p className="desc">API cost of one five-round game against its score. Models on the dashed line give the most score for the money.</p>
+          </div>
         </div>
         <div className="value-grid">
-          <div className="card chart chart-scroll">
-            <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: "auto" }} role="img" aria-label="Cost per game against score per game">
+          <div className="card chart-card chart-scroll">
+            <div className="chart-pad"><svg viewBox={`0 0 ${W} ${H}`} className="chart-svg" role="img" aria-label="Cost per game against score per game">
               {y.ticks(5).map((t) => (
                 <g key={t}>
-                  <line x1={M.l} x2={W - M.r} y1={y(t)} y2={y(t)} stroke="var(--rule-2)" />
-                  <text x={M.l - 10} y={y(t) + 4} textAnchor="end" className="ax" fill="var(--ink-3)">{fmt(t)}</text>
+                  <line x1={M.l} x2={W - M.r} y1={y(t)} y2={y(t)} stroke="var(--line-2)" />
+                  <text x={M.l - 10} y={y(t) + 4} textAnchor="end" className="ax">{fmt(t)}</text>
                 </g>
               ))}
               {xTicks.map((t) => (
                 <g key={t}>
-                  <line x1={x(t)} x2={x(t)} y1={M.t} y2={H - M.b} stroke="var(--rule-2)" />
-                  <text x={x(t)} y={H - M.b + 22} textAnchor="middle" className="ax" fill="var(--ink-3)">{money(t)}</text>
+                  <line x1={x(t)} x2={x(t)} y1={M.t} y2={H - M.b} stroke="var(--line-2)" />
+                  <text x={x(t)} y={H - M.b + 22} textAnchor="middle" className="ax">{money(t)}</text>
                 </g>
               ))}
-              <text x={M.l} y={14} className="ax" fill="var(--ink-3)">Score per game</text>
-              <text x={W - M.r} y={H - 8} textAnchor="end" className="ax" fill="var(--ink-3)">Cost per game (log scale)</text>
-              <polyline points={frontier.map((r) => `${x(cost(r.costPerGame))},${y(r.gameMean)}`).join(" ")} fill="none" stroke="var(--ink)" strokeWidth={1.2} strokeDasharray="4 4" opacity={0.45} />
+              <text x={M.l} y={14} className="ax">Score per game</text>
+              <text x={W - M.r} y={H - 8} textAnchor="end" className="ax">Cost per game (log scale)</text>
+              <polyline points={frontier.map((r) => `${x(cost(r.costPerGame))},${y(r.gameMean)}`).join(" ")} fill="none" stroke="var(--accent)" strokeWidth={1.5} strokeDasharray="5 5" opacity={0.7} />
               {ROWS.map((r) => {
                 const dim = !!focus && focus !== r.key;
                 const l = labels[r.key];
@@ -90,16 +92,16 @@ export function Value() {
                     <g transform={`translate(${x(cost(r.costPerGame))},${y(r.gameMean)})`}>
                       <MarkPin k={r.key} r={onFrontier.has(r.key) ? 11 : 9} dim={dim} />
                     </g>
-                    <text x={l.x} y={l.y} textAnchor={l.anchor} className="ax lbl" fill="var(--ink)" opacity={dim ? 0.2 : 1}>{r.name}</text>
+                    <text x={l.x} y={l.y} textAnchor={l.anchor} className="ax lbl" opacity={dim ? 0.2 : 1}>{r.name}</text>
                   </g>
                 );
               })}
-            </svg>
+            </svg></div>
           </div>
           <div className="card regions">
             <div className="regions-head">
               <h3>By region</h3>
-              <p className="small muted">Points per round, out of 5,000.</p>
+              <p className="small muted">Average points per round, out of 5,000. Darker is better; pale columns have too few photos to trust.</p>
             </div>
             <div className="reg-scroll">
               <div className="reg-table" style={{ gridTemplateColumns: `minmax(170px, 1.6fr) repeat(${REGIONS.length}, minmax(64px, 1fr))` }}>
@@ -116,7 +118,7 @@ export function Value() {
                       const v = r.byRegion[g]?.mean;
                       const thin = (META.regions[g] ?? 0) < SMALL;
                       return (
-                        <span key={g} className={`reg-c small${thin ? " thin" : ""}`} style={{ background: v == null ? "transparent" : `rgba(27,26,23,${(v / 5000) ** 2 * (thin ? 0.3 : 0.85)})`, color: !thin && v != null && v > 3300 ? "var(--paper)" : "var(--ink)" }}>
+                        <span key={g} className={`reg-c small${thin ? " thin" : ""}`} style={{ background: v == null ? "transparent" : `rgba(17,17,16,${(v / 5000) ** 2.2 * (thin ? 0.28 : 0.86)})`, color: !thin && v != null && v > 3400 ? "#fff" : "var(--ink)" }}>
                           {v == null ? "" : fmt(v)}
                         </span>
                       );
@@ -125,7 +127,6 @@ export function Value() {
                 ))}
               </div>
             </div>
-            <p className="small muted">Pale columns: too few photos to trust.</p>
           </div>
         </div>
       </div>

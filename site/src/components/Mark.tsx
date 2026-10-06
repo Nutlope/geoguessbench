@@ -9,6 +9,7 @@ const BY_MAKER: Record<string, string> = {
   MiniMax: "minimax",
   "Z.ai": "zai",
   Meta: "meta",
+  OpenAI: "openai",
 };
 /** Makers without a public mark get a one-letter monogram instead of an invented logo. */
 const MONOGRAM: Record<string, string> = { "Thinking Machines": "T" };

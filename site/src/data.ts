@@ -26,21 +26,21 @@ export const ROWS = DATA.rows;
 export const META = DATA.meta;
 export const byKey = new Map(ROWS.map((r) => [r.key, r]));
 
-/** One colour per entry; makers keep a family resemblance. */
+/** One colour per entry; a maker's models share a family (Claude rust, OpenAI ink). */
 export const COLOR: Record<string, string> = {
-  "claude-fable-5-1": "#8F2D0E",
-  "claude-opus-5-5": "#C2410C",
-  "claude-sonnet-5-5": "#E8793F",
-  "claude-haiku-4-5": "#D9A27C",
-  "kimi-k3": "#D0306F",
-  "qwen3-8-flash": "#0B8FA8",
-  "qwen3-5-9b": "#6B9A12",
-  "deepseek-v4-1-flash": "#2E62E0",
-  "minimax-m3": "#8E44E0",
-  "glm-5-3-flash": "#0A9363",
-  "inkling": "#57534E",
-  "muse-glimmer-30b": "#1E3A8A",
-  "gpt": "#111111",
+  "claude-fable-5-1": "#9a3412",
+  "claude-opus-5-5": "#d9572b",
+  "claude-sonnet-5-5": "#f0965e",
+  "gpt-6-astra": "#111110",
+  "gpt-6-1-sol": "#55565c",
+  "gpt-6-luna": "#a3a4aa",
+  "kimi-k3": "#d6336c",
+  "qwen3-8-flash": "#0e9aa7",
+  "qwen3-5-9b": "#7cb518",
+  "deepseek-v4-1-flash": "#2f6bff",
+  "minimax-m3": "#9b51e0",
+  "glm-5-3-flash": "#0f9d58",
+  "muse-glimmer-30b": "#1e3a8a",
 };
 export const colorOf = (k: string) => COLOR[k] ?? "#888";
 
@@ -54,7 +54,8 @@ export function km(n: number | null): string {
 }
 export function money(n: number): string {
   if (n === 0) return "free";
-  if (n < 1) return `$${+n.toPrecision(2)}`;
+  if (n < 0.01) return `$${+n.toFixed(4)}`;
+  if (n < 1) return `$${+n.toFixed(3)}`;
   return `$${n.toFixed(2)}`;
 }
 export function scaleWord(k: number | null): string {

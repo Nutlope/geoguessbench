@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DATA, ROWS, META, colorOf, pct } from "../data";
+import { DATA, ROWS, META, pct } from "../data";
 import { Mark } from "./Mark";
 
 /** Share of the fixed five-round games that the row model beat the column model. */
@@ -7,8 +7,8 @@ export function Matchups() {
   const [cell, setCell] = useState<{ a: string; b: string } | null>(null);
   const shade = (v: number) => {
     const d = v - 0.5;
-    if (Math.abs(d) < 0.02) return "var(--paper-2)";
-    return d > 0 ? `rgba(10,122,82,${0.08 + d * 1.05})` : `rgba(215,48,31,${0.06 + -d * 0.75})`;
+    if (Math.abs(d) < 0.02) return "var(--bg-2)";
+    return d > 0 ? `rgba(15,138,95,${0.07 + d * 1.15})` : `rgba(217,71,43,${0.05 + -d * 0.8})`;
   };
   const a = cell && ROWS.find((r) => r.key === cell.a), b = cell && ROWS.find((r) => r.key === cell.b);
   const v = cell ? DATA.h2h[cell.a][cell.b] : null;
@@ -17,23 +17,23 @@ export function Matchups() {
     <section className="block" id="matchups">
       <div className="wrap">
         <div className="head">
-          <div className="kicker"><b>04</b> Head to head</div>
-          <h2>Who wins the duel</h2>
-          <p className="lead">How often the row model beat the column model, across {META.games} games.</p>
+          <div>
+            <span className="label">Head to head</span>
+            <h2>Who wins the duel</h2>
+            <p className="desc">How often the row model outscored the column model across the same {META.games} games.</p>
+          </div>
         </div>
         <div className="card h2h-card">
-          <div className="h2h-read">
+          <div className="h2h-read" aria-live="polite">
             {a && b && v != null ? (
-              <p>
-                <Mark k={a.key} size={20} /> <b style={{ color: colorOf(a.key) }}>{a.name}</b> beat <Mark k={b.key} size={20} /> <b style={{ color: colorOf(b.key) }}>{b.name}</b> in {pct(v)} of the {META.games} games.
-              </p>
+              <p><Mark k={a.key} size={20} /> <b>{a.name}</b> beat <Mark k={b.key} size={20} /> <b>{b.name}</b> in <b>{pct(v)}</b> of games</p>
             ) : (
-              <p className="muted">Tap a cell. Green wins, red loses.</p>
+              <p className="muted">Hover or tap a cell. <span className="key win" /> row wins more often <span className="key lose" /> row loses more often</p>
             )}
           </div>
           <div className="h2h-scroll">
-            <div className="h2h" style={{ gridTemplateColumns: `minmax(150px, auto) repeat(${ROWS.length}, minmax(36px, 1fr))` }} onMouseLeave={() => setCell(null)}>
-              <span className="h2h-corner small muted">Row beats column</span>
+            <div className="h2h" style={{ gridTemplateColumns: `minmax(160px, auto) repeat(${ROWS.length}, minmax(38px, 1fr))` }} onMouseLeave={() => setCell(null)}>
+              <span className="h2h-corner small muted">Row vs column</span>
               {ROWS.map((r) => (
                 <span key={r.key} className="h2h-col"><Mark k={r.key} size={22} title={r.name} /></span>
               ))}
@@ -47,7 +47,7 @@ export function Matchups() {
                     return (
                       <button
                         key={rb.key}
-                        className={`h2h-c${on ? " on" : ""}`}
+                        className={`h2h-c tnum${on ? " on" : ""}`}
                         style={{ background: shade(w) }}
                         onMouseEnter={() => setCell({ a: ra.key, b: rb.key })}
                         onFocus={() => setCell({ a: ra.key, b: rb.key })}
@@ -63,7 +63,6 @@ export function Matchups() {
             </div>
           </div>
         </div>
-        
       </div>
     </section>
   );

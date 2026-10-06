@@ -40,20 +40,22 @@ export function Explorer() {
     <section className="block" id="photos">
       <div className="wrap">
         <div className="head">
-          <div className="kicker"><b>06</b> Every photo</div>
-          <h2>Play along</h2>
-          <p className="lead">Guess first, then see where every model pinned it and why.</p>
-        </div>
-        <div className="lb-ctl">
-          <div className="chips">
-            {(["game", "hard", "easy"] as Sort[]).map((s) => (
-              <button key={s} className="chip" aria-pressed={sort === s} onClick={() => setSort(s)}>{s === "game" ? "Game order" : s === "hard" ? "Hardest first" : "Easiest first"}</button>
-            ))}
+          <div>
+            <span className="label">Play along</span>
+            <h2>Every photo in the benchmark</h2>
+            <p className="desc">Guess first, then open a photo to see where each model put its pin and why.</p>
           </div>
-          <div className="chips">
-            {(["all", "city", "town"] as Tier[]).map((t) => (
-              <button key={t} className="chip" aria-pressed={tier === t} onClick={() => setTier(t)}>{t === "all" ? "All" : t === "city" ? "Big cities" : "Small towns"}</button>
-            ))}
+          <div className="ex-ctl">
+            <div className="seg" role="group" aria-label="Order">
+              {(["game", "hard", "easy"] as Sort[]).map((s) => (
+                <button key={s} aria-pressed={sort === s} onClick={() => setSort(s)}>{s === "game" ? "Game order" : s === "hard" ? "Hardest" : "Easiest"}</button>
+              ))}
+            </div>
+            <div className="seg" role="group" aria-label="Photo set">
+              {(["all", "city", "town"] as Tier[]).map((t) => (
+                <button key={t} aria-pressed={tier === t} onClick={() => setTier(t)}>{t === "all" ? "All" : t === "city" ? "Cities" : "Towns"}</button>
+              ))}
+            </div>
           </div>
         </div>
         <div className="grid">
@@ -67,7 +69,7 @@ export function Explorer() {
             </button>
           ))}
         </div>
-        <p className="small muted foot">Tile number: average score across all models, out of 5,000.</p>
+        <p className="small muted ex-foot">The badge on each photo is the average score across all models, out of 5,000.</p>
       </div>
       {open && (() => {
         const i = list.findIndex((p) => p.id === open.id);

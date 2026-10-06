@@ -55,7 +55,10 @@ async function runEntry(e: Entry) {
         const r = await callModel(e, b64);
         // Provider-side failures are retried, not scored: a stream that ended in
         // an error, or an empty reply. If the last try is still empty it counts.
-        if (attempt < 3 && (r.stop === "error" || !r.text.trim())) throw new Error(`retryable: ${r.stop ?? "empty"} reply`);
+        // A reply cut off by the token cap ("length", "max_tokens", "incomplete") is
+        // the model's own doing and is scored as is.
+        const capped = ["length", "max_tokens", "incomplete"].includes(r.stop ?? "");
+        if (attempt < 3 && (r.stop === "error" || (!r.text.trim() && !capped))) throw new Error(`retryable: ${r.stop ?? "empty"} reply`);
         const latencyMs = Date.now() - t0;
         const costUsd = (r.inTok * e.inPerM + r.outTok * e.outPerM) / 1e6;
         const row: RunRow = { entry: e.key, loc: loc.id, ts: Date.now(), text: r.text, guess: parseGuess(r.text), latencyMs, inTok: r.inTok, outTok: r.outTok, reasoningChars: r.reasoningChars, costUsd, stop: r.stop };
@@ -67,6 +70,7 @@ async function runEntry(e: Entry) {
         const msg = String((err as Error).message ?? err);
         const wait = /429|rate|overloaded|529|503|502|500|timeout|ECONN|fetch failed|retryable/i.test(msg) ? 4000 * 2 ** attempt : 1500;
         if (attempt === 3) { failed++; console.log(`  ${e.key} ${loc.id}: gave up: ${msg.slice(0, 160)}`); return; }
+        console.log(`  ${e.key} ${loc.id}: retry ${attempt + 1} after ${((Date.now() - t0) / 1000).toFixed(0)}s: ${msg.slice(0, 120)}`);
         await new Promise((r) => setTimeout(r, wait));
       }
     }

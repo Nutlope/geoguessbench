@@ -51,5 +51,10 @@ export function parseGuess(text: string): Guess | null {
 export function narration(text: string): string {
   const idx = text.indexOf(DELIM);
   const head = idx >= 0 ? text.slice(0, idx) : text.replace(/\{[\s\S]*\}\s*$/, "");
-  return head.replace(/```[a-z]*\n?/g, "").replace(/^\s*PART\s*1[:.]?\s*/i, "").replace(/\*\*/g, "").trim();
+  return head
+    .replace(/```[a-z]*\n?/g, "")
+    .replace(/\*\*/g, "")
+    .replace(/^\s*PART\s*1[:.]?\s*/i, "")
+    .replace(/\s*PART\s*2[:.]?\s*$/i, "")
+    .trim();
 }

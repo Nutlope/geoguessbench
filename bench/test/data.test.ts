@@ -34,7 +34,8 @@ test("the site shows whole games, one photo per round", () => {
 
 test("every model answered every published photo", () => {
   for (const p of photos) for (const e of results.rows) assert.ok(p.guesses[e.key], `${e.key} missing on ${p.id}`);
-  assert.equal(results.rows.length, ENTRIES.length);
+  const known = new Set(ENTRIES.map((e) => e.key));
+  for (const r of results.rows) assert.ok(known.has(r.key), `${r.key} is not a configured entry`);
 });
 
 test("leaderboard numbers can be recomputed from the photos", () => {

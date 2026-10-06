@@ -25,13 +25,14 @@ function CurveSpark() {
 export function Method() {
   const [open, setOpen] = useState(false);
   const europe = Math.round(((META.regions.Europe ?? 0) / META.photos) * 100);
-  const ties = ROWS.filter((r) => r.tiedWithTop);
   return (
     <section className="block" id="method">
       <div className="wrap">
         <div className="head">
-          <div className="kicker"><b>07</b> Method</div>
-          <h2>How it works</h2>
+          <div>
+            <span className="label">Method</span>
+            <h2>How it works</h2>
+          </div>
         </div>
 
         <div className="method">
@@ -59,13 +60,13 @@ export function Method() {
           </article>
 
           <article className="card m">
-            <span className="m-label">Rules</span>
-            <b className="m-big">1 try</b>
-            <p>Same prompt and photo for every model, no tools, fastest mode. No answer scores zero.</p>
+            <span className="m-label">Effort</span>
+            <b className="m-big">Medium</b>
+            <p>Every model reasons at medium effort, with the same prompt, one try, no tools and a 32k-token budget.</p>
             <ul className="m-facts small">
-              <li><span>Models</span><b>{ROWS.length}</b></li>
-              <li><span>Guesses</span><b>{fmt(META.totalCalls)}</b></li>
-              <li><span>API cost</span><b>${META.totalCost.toFixed(2)}</b></li>
+              <li><span>Models</span><b className="tnum">{ROWS.length}</b></li>
+              <li><span>Guesses</span><b className="tnum">{fmt(META.totalCalls)}</b></li>
+              <li><span>API cost</span><b className="tnum">${META.totalCost.toFixed(2)}</b></li>
             </ul>
           </article>
         </div>
@@ -75,8 +76,8 @@ export function Method() {
           <ul>
             <li>{europe}% of photos are in Europe</li>
             <li>Public photos may be in training data</li>
-            {ties.length > 1 && <li>The top {ties.length} are a statistical tie</li>}
-            <li>No OpenAI models yet</li>
+            <li>One still photo per round, no panning</li>
+            <li>DeepSeek has no "medium", so it runs at 50 of 100</li>
           </ul>
         </div>
 

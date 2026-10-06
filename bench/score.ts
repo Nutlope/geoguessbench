@@ -32,7 +32,14 @@ for (const e of ENTRIES) {
   for (const l of readFileSync(f, "utf8").split("\n").filter(Boolean)) { const r = JSON.parse(l) as RunRow; m.set(r.loc, r); }
   runs.set(e.key, m);
 }
-const entries = ENTRIES.filter((e) => runs.has(e.key) && runs.get(e.key)!.size > 0);
+// Only entries that answered every photo are scored; a half-finished run is
+// left out rather than shrinking the photo set for everyone else.
+const entries = ENTRIES.filter((e) => {
+  const m = runs.get(e.key);
+  const missing = dataset.filter((l) => !m?.has(l.id)).length;
+  if (missing) console.log(`skipping ${e.key}: ${missing} of ${dataset.length} photos not answered yet`);
+  return m && !missing;
+});
 // Photos answered by every entry, in dataset order.
 const common = dataset.filter((l) => entries.every((e) => runs.get(e.key)!.has(l.id)));
 // Whole games only.
@@ -177,7 +184,7 @@ const photos = await Promise.all(locs.map(async (l, i) => {
 }));
 
 const meta = {
-  version: "v1",
+  version: "v2",
   updated: new Date().toISOString().slice(0, 10),
   photos: locs.length,
   games: nGames,

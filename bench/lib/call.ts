@@ -22,7 +22,7 @@ export async function callModel(e: Entry, jpegB64: string): Promise<CallResult> 
 async function together(e: Entry, b64: string): Promise<CallResult> {
   const res = await fetch("https://api.together.xyz/v1/chat/completions", {
     method: "POST",
-    signal: AbortSignal.timeout(180_000),
+    signal: AbortSignal.timeout(600_000),
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.TOGETHER_API_KEY}`, "User-Agent": "GeoGuessBench/0.1" },
     body: JSON.stringify({
       model: e.model, stream: true, stream_options: { include_usage: true }, max_tokens: e.maxTokens, ...(e.request ?? {}),
@@ -60,7 +60,7 @@ async function together(e: Entry, b64: string): Promise<CallResult> {
 }
 
 async function claude(e: Entry, b64: string): Promise<CallResult> {
-  anthropic ??= new Anthropic({ maxRetries: 0, timeout: 300_000 });
+  anthropic ??= new Anthropic({ maxRetries: 0, timeout: 600_000 });
   const msg = await anthropic.messages
     .stream({
       model: e.model, max_tokens: e.maxTokens, system: SYSTEM, ...(e.request ?? {}),
@@ -73,10 +73,10 @@ async function claude(e: Entry, b64: string): Promise<CallResult> {
 }
 
 async function gpt(e: Entry, b64: string): Promise<CallResult> {
-  openai ??= new OpenAI({ maxRetries: 0, timeout: 300_000 });
+  openai ??= new OpenAI({ maxRetries: 0, timeout: 600_000 });
   const r = await openai.responses.create({
     model: e.model, max_output_tokens: e.maxTokens, instructions: SYSTEM, ...(e.request ?? {}),
     input: [{ role: "user", content: [{ type: "input_text", text: USER }, { type: "input_image", image_url: `data:image/jpeg;base64,${b64}`, detail: "high" }] }],
   } as OpenAI.Responses.ResponseCreateParamsNonStreaming);
-  return { text: r.output_text, inTok: r.usage?.input_tokens ?? 0, outTok: r.usage?.output_tokens ?? 0, reasoningChars: 0, stop: r.status };
+  return { text: r.output_text, inTok: r.usage?.input_tokens ?? 0, outTok: r.usage?.output_tokens ?? 0, reasoningChars: 0, stop: r.status === "incomplete" ? "incomplete" : r.status };
 }

@@ -1,8 +1,7 @@
-import { Hero } from "./components/Hero";
-import { Leaderboard } from "./components/Leaderboard";
+import { Nav, Hero } from "./components/Hero";
 import { Findings } from "./components/Findings";
+import { Round } from "./components/Round";
 import { DistanceLadder } from "./components/DistanceLadder";
-import { MissMap } from "./components/MissMap";
 import { Matchups } from "./components/Matchups";
 import { Value } from "./components/Value";
 import { Explorer } from "./components/Explorer";
@@ -13,12 +12,12 @@ import "./site.css";
 export default function App() {
   return (
     <>
+      <Nav />
       <Hero />
       <main>
         <Findings />
-        <Leaderboard />
+        <Round />
         <DistanceLadder />
-        <MissMap />
         <Matchups />
         <Value />
         <Explorer />

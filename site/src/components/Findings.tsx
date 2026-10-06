@@ -1,65 +1,55 @@
-import { ROWS, fmt, km, pct } from "../data";
+import { ROWS, fmt, km, pct, money } from "../data";
 import { Mark } from "./Mark";
 
 /** Headline findings, computed from the results so the copy never drifts from the data. */
 export function Findings() {
-  const [a, b, c] = ROWS;
-  const topTie = ROWS.filter((r) => r.tiedWithTop);
-  const cheapestTop = [...topTie].sort((x, y) => x.costPerGame - y.costPerGame)[0];
-  const priciestTop = [...topTie].sort((x, y) => y.costPerGame - x.costPerGame)[0];
-
+  const [a, b] = ROWS;
   const open = ROWS.filter((r) => r.open);
   const bestOpen = open[0];
-  const cheapOpen = [...open].filter((r) => r.gameMean >= bestOpen.gameMean * 0.97).sort((x, y) => x.costPerGame - y.costPerGame)[0];
-
-  const cityKm = a.byTier.city?.medianKm, townKm = a.byTier.town?.medianKm;
-  const weakest = ROWS[ROWS.length - 1];
-  const lowCountry = ROWS.filter((r) => r.countryAcc < 0.34);
+  // Best value: the cheapest model within 5% of the leader's score.
+  const value = [...ROWS].filter((r) => r.gameMean >= a.gameMean * 0.95).sort((x, y) => x.costPerGame - y.costPerGame)[0];
+  const cityKm = a.byTier.city?.medianKm ?? 0, townKm = a.byTier.town?.medianKm ?? 0;
 
   const cards = [
     {
-      big: topTie.length > 1 ? `${topTie.length}-way tie` : a.name,
-      title: topTie.length > 1 ? "No clear winner" : `${a.name} leads`,
-      body: topTie.length > 1
-        ? `${topTie.map((r) => r.name).join(", ")} are tied. ${cheapestTop.name} costs ${Math.round(priciestTop.costPerGame / cheapestTop.costPerGame)}x less than ${priciestTop.name}.`
-        : `${a.name} beats ${b.name} by ${fmt(a.gameMean - b.gameMean)} points a game, ahead of ${c.name}.`,
-      keys: topTie.map((r) => r.key),
+      key: a.key,
+      label: "Top model",
+      big: a.name,
+      body: `${fmt(a.gameMean)} points a game, ${fmt(a.gameMean - b.gameMean)} ahead of ${b.name}.`,
     },
     {
-      big: pct(bestOpen.gameMean / a.gameMean),
-      title: "Open models are close",
-      body: `${bestOpen.name} reaches ${pct(bestOpen.gameMean / a.gameMean)} of the top score${cheapOpen.key !== bestOpen.key ? `; ${cheapOpen.name} is ${Math.round(cheapestTop.costPerGame / cheapOpen.costPerGame)}x cheaper than the cheapest leader` : ""}.`,
-      keys: [bestOpen.key, cheapOpen.key],
+      key: bestOpen.key,
+      label: "Best open model",
+      big: bestOpen.name,
+      body: `${pct(bestOpen.gameMean / a.gameMean)} of the top score, at ${money(bestOpen.costPerGame)} a game.`,
     },
     {
-      big: `${km(cityKm ?? 0)} vs ${km(townKm ?? 0)}`,
-      title: "Small towns are harder",
-      body: `Typical miss for the leader: ${km(cityKm ?? 0)} in cities, ${km(townKm ?? 0)} in towns.`,
-      keys: [a.key],
+      key: value.key,
+      label: "Best value",
+      big: value.name,
+      body: `Within 5% of the top score for ${money(value.costPerGame)} a game${value.key !== a.key ? `, ${Math.max(1, Math.round(a.costPerGame / value.costPerGame))}x cheaper than ${a.name}` : ""}.`,
     },
     {
-      big: `${lowCountry.length || 1} of ${ROWS.length}`,
-      title: "Some miss the country",
-      body: lowCountry.length
-        ? `${lowCountry.map((r) => `${r.name} (${pct(r.countryAcc)})`).join(" and ")} find the right country under a third of the time.`
-        : `${weakest.name} is last, with the right country ${pct(weakest.countryAcc)} of the time.`,
-      keys: (lowCountry.length ? lowCountry : [weakest]).map((r) => r.key),
+      key: a.key,
+      label: "Towns are harder",
+      big: `${km(cityKm)} → ${km(townKm)}`,
+      body: `The top model's typical miss in big cities, then in small towns.`,
     },
   ];
 
   return (
-    <section className="block findings-block">
-      <div className="wrap">
-        <div className="findings">
-          {cards.map((f) => (
-            <article key={f.title} className="finding">
-              <span className="f-dots">{[...new Set(f.keys)].map((k) => <Mark key={k} k={k} size={24} />)}</span>
-              <b className="f-big">{f.big}</b>
-              <h3>{f.title}</h3>
-              <p className="small ink2">{f.body}</p>
-            </article>
-          ))}
-        </div>
+    <section className="findings-block">
+      <div className="wrap findings">
+        {cards.map((f) => (
+          <article key={f.label} className="finding card">
+            <div className="f-top">
+              <span className="label">{f.label}</span>
+              <Mark k={f.key} size={22} />
+            </div>
+            <b className="f-big">{f.big}</b>
+            <p className="small ink2">{f.body}</p>
+          </article>
+        ))}
       </div>
     </section>
   );

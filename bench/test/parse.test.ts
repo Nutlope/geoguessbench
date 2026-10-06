@@ -31,6 +31,10 @@ test("refuses to invent a pin", () => {
   assert.equal(parseGuess(`{"country":"Sweden","place":"Stockholm, 59.33, 18.06"}`), null); // numbers only inside a name
 });
 
+test("narration drops section labels the model wrote", () => {
+  assert.equal(narration(`PART 1: Fjords and sheep. PART 2:\n>>> {"lat":62,"lng":-6.8}`), "Fjords and sheep.");
+});
+
 test("narration drops the answer line and markdown", () => {
   assert.equal(narration(`**Left-hand traffic** and a Kiwi flag.\n>>> {"lat":1,"lng":2}`), "Left-hand traffic and a Kiwi flag.");
 });
