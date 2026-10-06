@@ -48,7 +48,6 @@ export function Nav() {
         </div>
         <div className="nav-actions">
           <GitHubStars />
-          <a className="btn ghost nav-cta" href="https://geoduel-alpha.vercel.app" target="_blank" rel="noreferrer">Play GeoDuel</a>
         </div>
       </div>
     </nav>
