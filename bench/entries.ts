@@ -40,7 +40,6 @@ export const ENTRIES: Entry[] = [
   // Closed, first-party APIs
   { key: "claude-fable-5-1", provider: "anthropic", model: "claude-fable-5-1", name: "Claude Fable 5.1", maker: "Anthropic", open: false, mode: MEDIUM, inPerM: 10, outPerM: 50, maxTokens: MAX, request: { output_config: { effort: "medium" } }, concurrency: 4 },
   { key: "claude-opus-5-5", provider: "anthropic", model: "claude-opus-5-5", name: "Claude Opus 5.5", maker: "Anthropic", open: false, mode: MEDIUM, inPerM: 4, outPerM: 20, maxTokens: MAX, request: { output_config: { effort: "medium" } }, concurrency: 4 },
-  { key: "claude-sonnet-5-5", provider: "anthropic", model: "claude-sonnet-5-5", name: "Claude Sonnet 5.5", maker: "Anthropic", open: false, mode: MEDIUM, inPerM: 2, outPerM: 10, maxTokens: MAX, request: { output_config: { effort: "medium" } }, concurrency: 4 },
   { key: "gpt-6-astra", provider: "openai", model: "gpt-6-astra", name: "GPT-6 Astra", maker: "OpenAI", open: false, mode: MEDIUM, inPerM: 10, outPerM: 50, maxTokens: MAX, request: { reasoning: { effort: "medium" } }, concurrency: 4 },
   { key: "gpt-6-1-sol", provider: "openai", model: "gpt-6.1-sol", name: "GPT-6.1 Sol", maker: "OpenAI", open: false, mode: MEDIUM, inPerM: 2, outPerM: 10, maxTokens: MAX, request: { reasoning: { effort: "medium" } }, concurrency: 4 },
   { key: "gpt-6-luna", provider: "openai", model: "gpt-6-luna", name: "GPT-6 Luna", maker: "OpenAI", open: false, mode: MEDIUM, inPerM: 0.1, outPerM: 0.5, maxTokens: MAX, request: { reasoning: { effort: "medium" } }, concurrency: 4 },

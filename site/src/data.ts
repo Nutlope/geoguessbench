@@ -30,7 +30,6 @@ export const byKey = new Map(ROWS.map((r) => [r.key, r]));
 export const COLOR: Record<string, string> = {
   "claude-fable-5-1": "#9a3412",
   "claude-opus-5-5": "#d9572b",
-  "claude-sonnet-5-5": "#f0965e",
   "gpt-6-astra": "#111110",
   "gpt-6-1-sol": "#55565c",
   "gpt-6-luna": "#a3a4aa",
