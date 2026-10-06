@@ -1,4 +1,3 @@
-import { META } from "../data";
 import { Wordmark } from "./Brand";
 
 const X = (
@@ -31,10 +30,6 @@ export function Footer() {
             Built by <a href="https://x.com/youssefuiux" target="_blank" rel="noreferrer" className="f-x">{X}Youssef</a> and <a href="https://x.com/nutlope" target="_blank" rel="noreferrer" className="f-x">{X}Hassan</a>
           </p>
         </div>
-      </div>
-      <div className="wrap f-base small">
-        <span>Photos: Panoramax and KartaView contributors, CC BY-SA 4.0. Map: Natural Earth.</span>
-        <span>{META.version} · {META.updated}</span>
       </div>
     </footer>
   );

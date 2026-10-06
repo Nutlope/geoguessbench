@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ROWS, META, fmt } from "../data";
+import { META, fmt } from "../data";
 import { Wordmark } from "./Brand";
 import { Leaderboard } from "./Leaderboard";
 
@@ -56,14 +56,9 @@ export function Nav() {
 }
 
 export function Hero() {
-  const updated = new Date(`${META.updated}T12:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   return (
     <header className="hero" id="top">
       <div className="wrap hero-copy">
-        <p className="pill small">
-          <span className="pill-dot" />
-          {META.version} · {ROWS.length} models · {META.photos} photos · updated {updated}
-        </p>
         <h1>Can AI play <span className="h1-2">GeoGuessr?</span></h1>
         <p className="lead">We show every model the same street photos and score its pin with GeoGuessr's own formula.</p>
         <div className="hero-ctas">

@@ -15,8 +15,6 @@
 
 /* ---------- hero ---------- */
 .hero-copy { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 18px; padding-top: clamp(48px, 7vw, 88px); }
-.pill { display: inline-flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px; border: 1px solid var(--line); border-radius: 99px; background: var(--surface); color: var(--ink-2); font-weight: 500; }
-.pill-dot { display: none; }
 .h1-2 { color: var(--ink-3); }
 .hero .lead { max-width: 44ch; text-wrap: balance; }
 .hero-ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 6px; }
@@ -246,7 +244,6 @@
 .f-x { display: inline-flex; align-items: center; gap: 6px; }
 .f-built { color: #f4f4f2; line-height: 1.9; }
 .f-built .f-x { gap: 5px; vertical-align: -1px; }
-.f-base { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding-block: 20px 28px; border-top: 1px solid #2a2a28; color: #8b8a85; }
 @media (max-width: 760px) { .footer-grid { grid-template-columns: 1fr 1fr; } .f-brand { grid-column: 1 / -1; } }
 
 /* ---------- model marks ---------- */
