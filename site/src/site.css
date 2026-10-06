@@ -7,7 +7,11 @@
 .nav-links { display: flex; gap: 26px; margin-left: auto; font-size: var(--f-sm); font-weight: 500; color: var(--ink-2); }
 .nav-links a:hover { color: var(--ink); }
 .nav-cta { height: 36px; padding: 0 14px; font-size: var(--f-sm); }
-@media (max-width: 760px) { .nav-links { display: none; } .nav-cta { margin-left: auto; } }
+.nav-actions { display: flex; gap: 8px; }
+.nav-gh { height: 36px; padding: 0 12px; gap: 7px; font-size: var(--f-sm); }
+.nav-gh-n { padding-left: 8px; border-left: 1px solid var(--line); color: var(--ink-2); }
+@media (max-width: 760px) { .nav-links { display: none; } .nav-actions { margin-left: auto; } }
+@media (max-width: 400px) { .nav-gh-txt { display: none; } }
 
 /* ---------- hero ---------- */
 .hero-copy { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 18px; padding-top: clamp(48px, 7vw, 88px); }
