@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { geoEqualEarth } from "d3-geo";
 import { ROWS, colorOf, fmt, km, loadPhotos, scaleWord, type Photo } from "../data";
 import { WorldMap } from "./WorldMap";
@@ -8,13 +9,31 @@ import { Mark, MarkPin } from "./Mark";
 type Sort = "game" | "hard" | "easy";
 type Tier = "all" | "city" | "town";
 const base = import.meta.env.BASE_URL;
+// Show about three rows first, then thirty more per click, always ending on a full row.
+const FIRST = 15, STEP = 30;
 
 export function Explorer() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [sort, setSort] = useState<Sort>("game");
   const [tier, setTier] = useState<Tier>("all");
   const [open, setOpen] = useState<Photo | null>(null);
+  const [n, setN] = useState(FIRST);
+  const [cols, setCols] = useState(5);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const moreRef = useRef<HTMLDivElement>(null);
   useEffect(() => { loadPhotos().then(setPhotos); }, []);
+
+  // The grid picks its own column count, so read it back to keep rows whole.
+  useEffect(() => {
+    const el = gridRef.current;
+    if (!el) return;
+    const measure = () => setCols(Math.max(1, getComputedStyle(el).gridTemplateColumns.split(" ").filter(Boolean).length));
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  useEffect(() => setN(FIRST), [sort, tier]);
 
   const list = useMemo(() => {
     const l = photos.filter((p) => tier === "all" || p.tier === tier);
@@ -22,6 +41,15 @@ export function Explorer() {
     if (sort === "easy") return [...l].sort((a, b) => b.avgPts - a.avgPts);
     return l;
   }, [photos, sort, tier]);
+
+  const shown = Math.min(list.length, Math.ceil(n / cols) * cols);
+  // Collapse without losing your place: keep the button where it was on screen.
+  const showFewer = () => {
+    const before = moreRef.current?.getBoundingClientRect().top ?? 0;
+    flushSync(() => setN(FIRST));
+    const after = moreRef.current?.getBoundingClientRect().top ?? 0;
+    window.scrollBy({ top: after - before, behavior: "instant" });
+  };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -58,8 +86,8 @@ export function Explorer() {
             </div>
           </div>
         </div>
-        <div className="grid">
-          {list.map((p) => (
+        <div className="grid" ref={gridRef}>
+          {list.slice(0, shown).map((p) => (
             <button key={p.id} className="tile" onClick={() => setOpen(p)} aria-label={`Open photo ${p.game}.${p.round}`}>
               <img src={`${base}photos/${p.id}.webp`} alt="" loading="lazy" width={p.w} height={p.h} />
               <span className="tile-meta small">
@@ -69,6 +97,15 @@ export function Explorer() {
             </button>
           ))}
         </div>
+        {(shown < list.length || n > FIRST) && (
+          <div className="ex-more" ref={moreRef}>
+            <div className="ex-more-btns">
+              {shown < list.length && <button className="btn ghost" onClick={() => setN(shown + STEP)}>Show more photos</button>}
+              {n > FIRST && <button className="btn ghost" onClick={showFewer}>Show fewer</button>}
+            </div>
+            <span className="small muted tnum">{shown} of {list.length} photos</span>
+          </div>
+        )}
         <p className="small muted ex-foot">The badge on each photo is the average score across all models, out of 5,000.</p>
       </div>
       {open && (() => {

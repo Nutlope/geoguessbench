@@ -27,7 +27,8 @@ const rows: R[] = results.rows;
 const lo = 0, hi = 25000;
 
 function page(w: number, h: number, wide: boolean) {
-  const rowH = wide ? 52 : 86;
+  // Rows shrink as the roster grows so the card always fits the frame.
+  const rowH = wide ? Math.min(52, Math.floor(620 / rows.length)) : Math.min(86, Math.floor(1130 / rows.length));
   const list = rows.map((r, i) => `
     <div class="row${i === 0 ? " first" : ""}">
       <span class="rk">${i + 1}</span>${mark(r.key, r.maker, wide ? 34 : 44)}
