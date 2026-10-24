@@ -11,7 +11,7 @@ import { LOGO_PATHS } from "../site/src/logos";
 const results = JSON.parse(readFileSync("site/src/data/results.json", "utf8"));
 const dataTs = readFileSync("site/src/data.ts", "utf8");
 const COLOR = Object.fromEntries([...dataTs.matchAll(/"([a-z0-9-]+)": "(#[0-9a-f]{6})"/g)].map((m) => [m[1], m[2]]));
-const BY_MAKER: Record<string, string> = { Anthropic: "claude", "Moonshot AI": "moonshot", "Alibaba Qwen": "qwen", DeepSeek: "deepseek", MiniMax: "minimax", "Z.ai": "zai", Meta: "meta", OpenAI: "openai" };
+const BY_MAKER: Record<string, string> = { Anthropic: "claude", "Moonshot AI": "moonshot", "Alibaba Qwen": "qwen", DeepSeek: "deepseek", MiniMax: "minimax", "Z.ai": "zai", Meta: "meta", OpenAI: "openai", Google: "google" };
 const fmt = (n: number) => Math.round(n).toLocaleString("en-US");
 const PIN = "M16 16.2C14.9 14.7 11.3 12.6 11.3 9.5A4.7 4.7 0 0 1 20.7 9.5C20.7 12.6 17.1 14.7 16 16.2Z";
 const logo = (s: number) => `<svg viewBox="0 0 32 32" width="${s}" height="${s}"><defs><mask id="c" maskUnits="userSpaceOnUse"><rect width="32" height="32" fill="#fff"/><path d="${PIN}" stroke="#000" stroke-width="3" stroke-linejoin="round"/></mask></defs><g mask="url(#c)" fill="none" stroke="#111110" stroke-width="2"><circle cx="16" cy="16" r="13"/><ellipse cx="16" cy="16" rx="5.6" ry="13"/><path d="M3 16h26"/></g><path d="${PIN}" fill="#f2542d"/><circle cx="16" cy="9.5" r="1.75" fill="#fff"/></svg>`;

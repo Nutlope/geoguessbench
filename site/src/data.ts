@@ -33,6 +33,8 @@ export const COLOR: Record<string, string> = {
   "gpt-6-astra": "#111110",
   "gpt-6-1-sol": "#55565c",
   "gpt-6-luna": "#a3a4aa",
+  "gemini-4-argon": "#1a73e8",
+  "gemini-3-8-flash": "#38bdf8",
   "kimi-k3": "#d6336c",
   "qwen3-8-flash": "#0e9aa7",
   "qwen3-5-9b": "#7cb518",

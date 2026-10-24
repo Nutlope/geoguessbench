@@ -9,7 +9,7 @@ import { LOGO_PATHS } from "../site/src/logos";
 const results = JSON.parse(readFileSync("site/src/data/results.json", "utf8"));
 const dataTs = readFileSync("site/src/data.ts", "utf8");
 const COLOR = Object.fromEntries([...dataTs.matchAll(/"([a-z0-9-]+)": "(#[0-9a-f]{6})"/g)].map((m) => [m[1], m[2]]));
-const BY_MAKER: Record<string, string> = { Anthropic: "claude", "Moonshot AI": "moonshot", "Alibaba Qwen": "qwen", DeepSeek: "deepseek", MiniMax: "minimax", "Z.ai": "zai", Meta: "meta", OpenAI: "openai" };
+const BY_MAKER: Record<string, string> = { Anthropic: "claude", "Moonshot AI": "moonshot", "Alibaba Qwen": "qwen", DeepSeek: "deepseek", MiniMax: "minimax", "Z.ai": "zai", Meta: "meta", OpenAI: "openai", Google: "google" };
 const fmt = (n: number) => Math.round(n).toLocaleString("en-US");
 
 function mark(key: string, maker: string, size: number) {

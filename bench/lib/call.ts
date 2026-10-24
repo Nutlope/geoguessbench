@@ -16,6 +16,7 @@ let openai: OpenAI | null = null;
 export async function callModel(e: Entry, jpegB64: string): Promise<CallResult> {
   if (e.provider === "together") return together(e, jpegB64);
   if (e.provider === "anthropic") return claude(e, jpegB64);
+  if (e.provider === "google") return google(e, jpegB64);
   return gpt(e, jpegB64);
 }
 
@@ -79,4 +80,34 @@ async function gpt(e: Entry, b64: string): Promise<CallResult> {
     input: [{ role: "user", content: [{ type: "input_text", text: USER }, { type: "input_image", image_url: `data:image/jpeg;base64,${b64}`, detail: "high" }] }],
   } as OpenAI.Responses.ResponseCreateParamsNonStreaming);
   return { text: r.output_text, inTok: r.usage?.input_tokens ?? 0, outTok: r.usage?.output_tokens ?? 0, reasoningChars: 0, stop: r.status === "incomplete" ? "incomplete" : r.status };
+}
+
+async function google(e: Entry, b64: string): Promise<CallResult> {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${e.model}:generateContent?key=${process.env.GEMINI_API_KEY}`;
+  const res = await fetch(url, {
+    method: "POST",
+    signal: AbortSignal.timeout(600_000),
+    headers: { "Content-Type": "application/json", "User-Agent": "GeoGuessBench/0.1" },
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: SYSTEM }] },
+      contents: [{ role: "user", parts: [{ inlineData: { mimeType: "image/jpeg", data: b64 } }, { text: USER }] }],
+      generationConfig: { maxOutputTokens: e.maxTokens, ...(e.request ?? {}) },
+    }),
+  });
+  if (!res.ok) throw new Error(`Google ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  const j = (await res.json()) as {
+    candidates?: { content?: { parts?: { text?: string; thought?: boolean }[] }; finishReason?: string }[];
+    usageMetadata?: { promptTokenCount?: number; candidatesTokenCount?: number; thoughtsTokenCount?: number };
+    error?: unknown;
+  };
+  if (j.error) throw new Error(`Google error: ${JSON.stringify(j.error).slice(0, 200)}`);
+  const cand = j.candidates?.[0];
+  const parts = cand?.content?.parts ?? [];
+  const text = parts.filter((p) => !p.thought).map((p) => p.text ?? "").join("");
+  const reasoningChars = parts.filter((p) => p.thought).reduce((a, p) => a + (p.text?.length ?? 0), 0);
+  const inTok = j.usageMetadata?.promptTokenCount ?? 0;
+  const outTok = (j.usageMetadata?.candidatesTokenCount ?? 0) + (j.usageMetadata?.thoughtsTokenCount ?? 0);
+  const fr = cand?.finishReason;
+  const stop = fr === "MAX_TOKENS" ? "max_tokens" : fr?.toLowerCase();
+  return { text, inTok, outTok, reasoningChars, stop };
 }
