@@ -6,6 +6,7 @@
  * provider:
  * - Claude: output_config.effort "medium" (adaptive thinking is always on).
  * - OpenAI: reasoning.effort "medium".
+ * - Google: thinkingConfig.thinkingLevel "MEDIUM".
  * - Together open models: reasoning_effort "medium".
  * - DeepSeek V4.1 has no named medium; it takes 1 to 100, so it gets 50,
  *   passed through chat_template_kwargs because the top-level field is
@@ -13,7 +14,7 @@
  * Prices are USD per million tokens from each provider's live price list on
  * 2026-10-06.
  */
-export type Provider = "together" | "anthropic" | "openai";
+export type Provider = "together" | "anthropic" | "openai" | "google";
 
 export type Entry = {
   key: string;
@@ -43,6 +44,8 @@ export const ENTRIES: Entry[] = [
   { key: "gpt-6-astra", provider: "openai", model: "gpt-6-astra", name: "GPT-6 Astra", maker: "OpenAI", open: false, mode: MEDIUM, inPerM: 10, outPerM: 50, maxTokens: MAX, request: { reasoning: { effort: "medium" } }, concurrency: 4 },
   { key: "gpt-6-1-sol", provider: "openai", model: "gpt-6.1-sol", name: "GPT-6.1 Sol", maker: "OpenAI", open: false, mode: MEDIUM, inPerM: 2, outPerM: 10, maxTokens: MAX, request: { reasoning: { effort: "medium" } }, concurrency: 4 },
   { key: "gpt-6-luna", provider: "openai", model: "gpt-6-luna", name: "GPT-6 Luna", maker: "OpenAI", open: false, mode: MEDIUM, inPerM: 0.1, outPerM: 0.5, maxTokens: MAX, request: { reasoning: { effort: "medium" } }, concurrency: 4 },
+  { key: "gemini-4-argon", provider: "google", model: "gemini-4-argon", name: "Gemini 4 Argon", maker: "Google", open: false, mode: MEDIUM, inPerM: 2, outPerM: 10, maxTokens: MAX, request: { thinkingConfig: { thinkingLevel: "MEDIUM", includeThoughts: true } }, concurrency: 6 },
+  { key: "gemini-3-8-flash", provider: "google", model: "gemini-3.8-flash", name: "Gemini 3.8 Flash", maker: "Google", open: false, mode: MEDIUM, inPerM: 0.75, outPerM: 3.75, maxTokens: MAX, request: { thinkingConfig: { thinkingLevel: "MEDIUM", includeThoughts: true } }, concurrency: 8 },
 
   // Open weights on Together AI
   { key: "kimi-k3", provider: "together", model: "moonshotai/Kimi-K3", name: "Kimi K3", maker: "Moonshot AI", open: true, mode: MEDIUM, inPerM: 2.7, outPerM: 13.5, maxTokens: MAX, request: med, concurrency: OPEN_CONCURRENCY },
