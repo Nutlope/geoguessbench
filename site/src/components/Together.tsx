@@ -54,7 +54,7 @@ function TogetherWordmark({ className = "", height = 16 }: { className?: string;
 /** "Powered by Together AI", linked out to together.ai. */
 export function PoweredByTogether({ className = "" }: { className?: string }) {
   return (
-    <a className={`powered ${className}`} href="https://www.together.ai" target="_blank" rel="noopener noreferrer" aria-label="Powered by Together AI">
+    <a className={`powered ${className}`} href="https://togetherai.link/?utm_source=geoguessbench&utm_medium=referral&utm_campaign=example-app" target="_blank" rel="noopener noreferrer" aria-label="Powered by Together AI">
       <span>Powered by</span>
       <TogetherWordmark height={18} />
     </a>
